@@ -7,6 +7,7 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    scroll-behavior: smooth;
 }
 
 #infoButton {
@@ -27,7 +28,7 @@ body {
 
 .container {
     display: flex;
-    width: 90%;
+    width: 100%;
     min-width: 320px;
     max-width: 1200px;
     background: white;
@@ -50,7 +51,6 @@ body {
     justify-content: center;
     position: relative;
     min-height: 700px;
-    text-align: center; /* Ensure center alignment for text within */
 }
 
 #qrcode {
@@ -59,8 +59,12 @@ body {
     max-width: 370px;
     max-height: 370px;
     background: transparent;
-    margin: 0 auto; /* Center the QR code */
+    margin-top: 20px;
     animation: zoomBounce 0.8s ease-out;
+
+    img {
+        width: 100%;
+    }
 }
 
 #qrStringOutput {
@@ -164,7 +168,7 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        width: 100%;
+       margin: 10px;
     }
 
     .left-panel {
@@ -172,7 +176,6 @@ button:hover {
         align-items: center;
         justify-content: center;
         min-height: auto;
-        text-align: center; /* Ensure all contents are centered on mobile */
     }
 
     #qrcode {
@@ -180,7 +183,7 @@ button:hover {
         height: 80vw;
         max-width: 300px;
         max-height: 300px;
-        margin: 0 auto; /* Center on mobile */
+        margin-top: 20px;
     }
 
     .disclaimer {

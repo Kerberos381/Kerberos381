@@ -132,6 +132,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const qrString = generateQRString(data);
         if (qrString) {
             generateQRCode(qrString);
+            window.scrollTo(0, 0);
+            // Scroll to #root
+
         }
     });
 
