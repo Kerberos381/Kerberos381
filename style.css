@@ -50,6 +50,7 @@ body {
     justify-content: center;
     position: relative;
     min-height: 700px;
+    text-align: center; /* Ensure center alignment for text within */
 }
 
 #qrcode {
@@ -58,7 +59,7 @@ body {
     max-width: 370px;
     max-height: 370px;
     background: transparent;
-    margin-top: 20px;
+    margin: 0 auto; /* Center the QR code */
     animation: zoomBounce 0.8s ease-out;
 }
 
@@ -163,7 +164,7 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        width: 91%;
+        width: 100%;
     }
 
     .left-panel {
@@ -171,6 +172,7 @@ button:hover {
         align-items: center;
         justify-content: center;
         min-height: auto;
+        text-align: center; /* Ensure all contents are centered on mobile */
     }
 
     #qrcode {
@@ -178,7 +180,7 @@ button:hover {
         height: 80vw;
         max-width: 300px;
         max-height: 300px;
-        margin-top: 20px;
+        margin: 0 auto; /* Center on mobile */
     }
 
     .disclaimer {
