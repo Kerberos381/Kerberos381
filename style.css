@@ -164,7 +164,7 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        width: 100%;
+        width: 90%;
     }
 
     .left-panel {
