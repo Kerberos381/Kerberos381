@@ -25,13 +25,8 @@ body {
     text-align: center;
 }
 
-#infoButton:hover {
-    background-color: transparent;
-}
-
 .container {
     display: flex;
-    flex-wrap: wrap;
     width: 90%;
     min-width: 320px;
     max-width: 1200px;
@@ -39,7 +34,6 @@ body {
     border-radius: 25px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    min-height: 700px;
 }
 
 .left-panel, .right-panel {
@@ -53,9 +47,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Center content vertically */
+    justify-content: center; /* Center QR code vertically */
     position: relative;
-    min-height: 700px;
+    min-height: 700px; /* Set a minimum height for large screens */
 }
 
 #qrcode {
@@ -80,7 +74,7 @@ body {
     padding: 10px;
     width: 100%;
     position: absolute;
-    bottom: 20px; /* Anchors disclaimer at the bottom of the left panel */
+    bottom: 20px;
 }
 
 /* Right Panel Styling */
@@ -131,7 +125,7 @@ form input:focus {
 }
 
 button {
-    padding: 16px;
+    padding: 15px;
     background-color: #29b6f6;
     color: white;
     border: none;
@@ -171,28 +165,6 @@ button:hover {
     .container {
         flex-direction: column;
         width: 100%;
-        min-height: auto;
     }
 
     .left-panel {
-        padding: 10px;
-        justify-content: center; /* Center content vertically on mobile */
-        align-items: center;
-        min-height: auto;
-    }
-
-    #qrcode {
-        width: 80vw;
-        height: 80vw;
-        max-width: 300px;
-        max-height: 300px;
-        margin-bottom: 20px;
-    }
-
-    .disclaimer {
-        padding: 10px;
-        position: relative;
-        margin-top: 10px;
-        bottom: 0;
-    }
-}
