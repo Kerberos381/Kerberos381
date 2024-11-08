@@ -72,7 +72,7 @@ body {
     color: #777;
     text-align: center;
     padding: 10px;
-    width: 100%;
+    width: 90%; /* Adjusted for mobile responsiveness */
     position: absolute;
     bottom: 20px;
 }
@@ -163,7 +163,7 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        width: 95%;
+        width: 100%;
     }
 
     .left-panel {
@@ -178,13 +178,13 @@ button:hover {
         height: 80vw;
         max-width: 300px;
         max-height: 300px;
-        margin-bottom: 20px;
+        margin-top: 20px;
     }
 
     .disclaimer {
         padding: 10px;
         position: relative;
-        margin-top: auto;
+        margin-top: 20px; /* Spacing below QR code */
         bottom: 0;
         text-align: center;
     }
