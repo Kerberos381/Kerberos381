@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let qrString = `SPD*1.0*ACC:${iban}*AM:${data.amount}*CC:CZK`;
 
         // Add optional fields if they are present
+        if (data.receiverName) qrString += `*RN:${data.receiverName}`;
         if (data.variableSymbol) qrString += `*X-VS:${data.variableSymbol}`;
         if (data.message) qrString += `*MSG:${data.message}`;
 
@@ -102,11 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (!allFieldsFilled) {
-            alert(`Please fill in the following fields: ${missingFields.join(", ")}`);
+            alert(`Prosím vyplňte povinná pole!: ${missingFields.join(", ")}`);
             return;
         }
 
         const data = {
+            receiverName: document.getElementById("receiverName").value || "", // Get recipient name
             prefix: document.getElementById("prefix").value || "",
             accountNumber: document.getElementById("accountNumber").value,
             bankCode: document.getElementById("bankCode").value,

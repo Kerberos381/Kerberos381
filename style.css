@@ -96,7 +96,6 @@ h2 {
     text-align: center;
 }
 
-/* Form styling */
 form {
     display: flex;
     flex-direction: column;
@@ -164,13 +163,13 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        width: 100%;
+        width: 80%;
     }
 
     .left-panel {
         padding: 10px;
         align-items: center;
-        justify-content: center; /* Center content vertically on mobile */
+        justify-content: center;
         min-height: auto;
     }
 
@@ -185,8 +184,8 @@ button:hover {
     .disclaimer {
         padding: 10px;
         position: relative;
-        margin-top: auto; /* Pushes disclaimer below QR code */
+        margin-top: auto;
         bottom: 0;
-        text-align: center; /* Ensures centered alignment on smaller screens */
+        text-align: center;
     }
 }
