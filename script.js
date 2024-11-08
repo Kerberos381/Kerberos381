@@ -4,11 +4,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const qrStringOutput = document.getElementById("qrStringOutput");
     const infoButton = document.getElementById("infoButton");
 
-    // Function to generate a QR code with responsive sizing
+    // Map of special characters to replacements
+    const characterMap = {
+        'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n', 
+        'ó': 'o', 'ř': 'r', 'š': 's', 'ť': 't', 'ú': 'u', 'ů': 'u', 'ý': 'y', 'ž': 'z'
+    };
+
+    // Function to replace unsupported characters
+    function replaceUnsupportedCharacters(text) {
+        return text.replace(/[^\w\s]/g, (char) => characterMap[char] || char);
+    }
+
+    // Function to validate and notify of unsupported characters
+    function validateText(text) {
+        const unsupportedChars = text.match(/[^\w\s]/g) || [];
+        const unsupported = unsupportedChars.filter(char => !characterMap[char]);
+        
+        if (unsupported.length > 0) {
+            alert(`Unsupported characters detected: ${unsupported.join(", ")}`);
+            return false;
+        }
+        return true;
+    }
+
     function generateQRCode(text) {
         qrCodeContainer.innerHTML = ""; // Clear previous QR code
 
-        // Reset animation
         qrCodeContainer.style.animation = "none";
         setTimeout(() => qrCodeContainer.style.animation = "zoomBounce 0.8s ease-out", 10);
 
@@ -23,28 +44,18 @@ document.addEventListener("DOMContentLoaded", function () {
             correctLevel: QRCode.CorrectLevel.M,
         });
 
-        // Show the generated QR code string for debugging
         qrStringOutput.textContent = text;
     }
 
-    // Function to calculate Czech IBAN based on bank code, prefix, and account number
     function calculateIBAN(bankCode, prefix, accountNumber) {
-        // Ensure prefix and account number have correct lengths
         const paddedPrefix = prefix.padStart(6, '0');
         const paddedAccountNumber = accountNumber.padStart(10, '0');
-
-        // Assemble the BBAN part (bankCode + prefix + accountNumber)
         const bban = `${bankCode}${paddedPrefix}${paddedAccountNumber}`;
-
-        // Convert to a numeric IBAN format by appending 'CZ' as '123500'
         const numericIBAN = `${bban}123500`;
         
         try {
-            // Calculate checksum
             const checksum = 98n - BigInt(numericIBAN) % 97n;
             const checkDigits = checksum.toString().padStart(2, '0');
-
-            // Return formatted IBAN
             return `CZ${checkDigits}${bban}`;
         } catch (error) {
             console.error("Error calculating IBAN:", error);
@@ -53,19 +64,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Function to generate the QR code string in Czech payment format
     function generateQRString(data) {
         const iban = calculateIBAN(data.bankCode, data.prefix || '000000', data.accountNumber);
+        if (!iban) return null;
 
-        // Ensure the IBAN is valid
-        if (!iban) {
-            return null; // Return null if IBAN calculation failed
-        }
-
-        // Start with mandatory fields
         let qrString = `SPD*1.0*ACC:${iban}*AM:${data.amount}*CC:CZK`;
 
-        // Add optional fields if they are present
         if (data.receiverName) qrString += `*RN:${data.receiverName}`;
         if (data.variableSymbol) qrString += `*X-VS:${data.variableSymbol}`;
         if (data.message) qrString += `*MSG:${data.message}`;
@@ -73,7 +77,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return qrString;
     }
 
-    // Generate a default QR code on page load
     generateQRCode("HELLO STRANGER");
 
     generateBtn.addEventListener("click", function (event) {
@@ -107,8 +110,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const data = {
-            receiverName: document.getElementById("receiverName").value || "", // Get recipient name
+        let data = {
+            receiverName: document.getElementById("receiverName").value || "",
             prefix: document.getElementById("prefix").value || "",
             accountNumber: document.getElementById("accountNumber").value,
             bankCode: document.getElementById("bankCode").value,
@@ -117,13 +120,21 @@ document.addEventListener("DOMContentLoaded", function () {
             amount: document.getElementById("amount").value || "0"
         };
 
+        // Replace unsupported characters in receiverName and message
+        data.receiverName = replaceUnsupportedCharacters(data.receiverName);
+        data.message = replaceUnsupportedCharacters(data.message);
+
+        // Validate if any truly unsupported characters remain
+        if (!validateText(data.receiverName) || !validateText(data.message)) {
+            return;
+        }
+
         const qrString = generateQRString(data);
         if (qrString) {
             generateQRCode(qrString);
         }
     });
 
-    // Toggle the visibility of the QR string output when the "i" button is clicked
     infoButton.addEventListener("click", () => {
         qrStringOutput.style.display = qrStringOutput.style.display === "none" ? "block" : "none";
     });
