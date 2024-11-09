@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const qrCodeContainer = document.getElementById("qrcode");
     const generateBtn = document.getElementById("generateBtn");
+    const downloadPdfLink = document.getElementById("downloadPdfLink");
     const qrStringOutput = document.getElementById("qrStringOutput");
     const infoButton = document.getElementById("infoButton");
 
@@ -8,25 +9,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const receiverNameInput = document.getElementById("receiverName");
     const prefixInput = document.getElementById("prefix");
     const accountNumberInput = document.getElementById("accountNumber");
-    const bankCodeInput = document.getElementById("bankCode");
+    const bankCodeSelect = document.getElementById("bankCode"); // Updated variable
     const variableSymbolInput = document.getElementById("variableSymbol");
     const messageInput = document.getElementById("message");
     const amountInput = document.getElementById("amount");
 
-    // Map of special characters to replacements
+    // Map of special characters to replacements (for QR code generation)
     const characterMap = {
         'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n',
-        'ó': 'o', 'ř': 'r', 'š': 's', 'ť': 't', 'ú': 'u', 'ů': 'u', 'ý': 'y', 'ž': 'z'
+        'ó': 'o', 'ř': 'r', 'š': 's', 'ť': 't', 'ú': 'u', 'ů': 'u', 'ý': 'y', 'ž': 'z',
+        'Á': 'A', 'Č': 'C', 'Ď': 'D', 'É': 'E', 'Ě': 'E', 'Í': 'I', 'Ň': 'N',
+        'Ó': 'O', 'Ř': 'R', 'Š': 'S', 'Ť': 'T', 'Ú': 'U', 'Ů': 'U', 'Ý': 'Y', 'Ž': 'Z'
     };
 
-    // Function to replace unsupported characters
+    // Function to replace unsupported characters for QR code
     function replaceUnsupportedCharacters(text) {
-        return text.replace(/[^\w\s]/g, (char) => characterMap[char] || char);
+        return text.replace(/[^\x00-\x7F]/g, (char) => characterMap[char] || '');
     }
 
     // Function to validate and notify of unsupported characters
     function validateText(text) {
-        const unsupportedChars = text.match(/[^\w\s]/g) || [];
+        const unsupportedChars = text.match(/[^\x00-\x7F]/g) || [];
         const unsupported = unsupportedChars.filter(char => !characterMap[char]);
 
         if (unsupported.length > 0) {
@@ -91,6 +94,22 @@ document.addEventListener("DOMContentLoaded", function () {
         return qrString;
     }
 
+    // Load bank codes from JSON file and populate the dropdown
+    fetch('bank_codes.json')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(bank => {
+                const option = document.createElement('option');
+                option.value = bank.code;
+                option.textContent = `${bank.code} (${bank.name})`;
+                bankCodeSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading bank codes:', error);
+            alert('Nepodařilo se načíst seznam kódů bank.');
+        });
+
     // Initial QR code
     generateQRCode("HELLO STRANGER");
 
@@ -99,21 +118,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const mandatoryFields = [
             { id: "accountNumber", name: "Číslo účtu" },
-            { id: "bankCode", name: "Kód banky" },
+            { id: "bankCode", name: "Kód banky", element: bankCodeSelect },
         ];
         let allFieldsFilled = true;
         let missingFields = [];
 
         // Reset input styles
         mandatoryFields.forEach(field => {
-            const input = document.getElementById(field.id);
+            const input = field.element || document.getElementById(field.id);
             input.style.border = "none";
             input.style.boxShadow = "0 2px 3px rgba(0, 0, 0, 0.1)";
         });
 
         // Validate mandatory fields
         mandatoryFields.forEach(field => {
-            const input = document.getElementById(field.id);
+            const input = field.element || document.getElementById(field.id);
             if (!input.value.trim()) {
                 input.style.border = "1px solid red";
                 input.style.boxShadow = "0 0 5px rgba(255, 0, 0, 0.5)";
@@ -131,13 +150,13 @@ document.addEventListener("DOMContentLoaded", function () {
             receiverName: receiverNameInput.value || "",
             prefix: prefixInput.value || "",
             accountNumber: accountNumberInput.value,
-            bankCode: bankCodeInput.value,
+            bankCode: bankCodeSelect.value,
             variableSymbol: variableSymbolInput.value,
             message: messageInput.value,
             amount: amountInput.value || "0"
         };
 
-        // Replace unsupported characters in receiverName and message
+        // Replace unsupported characters in receiverName and message for QR code
         data.receiverName = replaceUnsupportedCharacters(data.receiverName);
         data.message = replaceUnsupportedCharacters(data.message);
 
@@ -157,20 +176,6 @@ document.addEventListener("DOMContentLoaded", function () {
     infoButton.addEventListener("click", () => {
         qrStringOutput.style.display = qrStringOutput.style.display === "none" ? "block" : "none";
     });
-
-    // Function to show error messages
-    function showError(inputId, message) {
-        const inputField = document.getElementById(inputId);
-        let errorElement = inputField.nextElementSibling;
-
-        if (!errorElement || !errorElement.classList.contains('error-message')) {
-            errorElement = document.createElement('div');
-            errorElement.className = 'error-message';
-            inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
-        }
-
-        errorElement.textContent = message;
-    }
 
     // Paste event listener for account number input
     accountNumberInput.addEventListener('paste', function (event) {
@@ -200,10 +205,74 @@ document.addEventListener("DOMContentLoaded", function () {
             accountNumberInput.value = accountNumber;
 
             if (bankCode) {
-                bankCodeInput.value = bankCode;
+                bankCodeSelect.value = bankCode;
             }
         } else {
             alert('Formát čísla účtu není platný.');
         }
     }
+
+    // Download PDF functionality using pdfmake
+    downloadPdfLink.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        // Get the QR code image data
+        const qrCanvas = qrCodeContainer.querySelector("canvas");
+        if (!qrCanvas) {
+            alert("Nejprve prosím vygenerujte QR kód.");
+            return;
+        }
+
+        const qrDataUrl = qrCanvas.toDataURL("image/png");
+
+        // Prepare the data to display
+        const dataFields = [
+            { label: "Název příjemce", value: receiverNameInput.value },
+            { label: "Předčíslí účtu", value: prefixInput.value },
+            { label: "Číslo účtu", value: accountNumberInput.value },
+            { label: "Kód banky", value: bankCodeSelect.options[bankCodeSelect.selectedIndex].text },
+            { label: "Částka v Kč", value: amountInput.value },
+            { label: "Variabilní symbol", value: variableSymbolInput.value },
+            { label: "Zpráva pro příjemce", value: messageInput.value },
+        ];
+
+        const content = [];
+
+        // Add the QR code image
+        content.push({
+            image: qrDataUrl,
+            width: 200,
+            alignment: 'center',
+            margin: [0, 0, 0, 20]
+        });
+
+        // Add the data fields
+        dataFields.forEach(field => {
+            if (field.value) {
+                content.push({
+                    text: `${field.label}: ${field.value}`,
+                    fontSize: 12,
+                    margin: [0, 0, 0, 5]
+                });
+            }
+        });
+
+        // Define the PDF document
+        const docDefinition = {
+            content: content,
+            defaultStyle: {
+                font: 'Helvetica'
+            },
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true,
+                    margin: [0, 0, 0, 10]
+                }
+            }
+        };
+
+        // Generate the PDF
+        pdfMake.createPdf(docDefinition).download('qr_code.pdf');
+    });
 });

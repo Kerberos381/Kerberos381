@@ -17,6 +17,8 @@
     <div class="container">
         <div class="left-panel">
             <div id="qrcode"></div>
+            <!-- Download Link -->
+            <a href="#" id="downloadPdfLink">Stáhnout QR kód</a>
             <p id="qrStringOutput" style="display: none; margin-top: 20px; font-weight: bold;"></p>
             <p class="disclaimer">UPOZORNĚNÍ: VŽDY ZKONTROLUJTE SPRÁVNOST NAČTENÝCH DAT, UŽITÍ NA VLASTNÍ ZODPOVĚDNOST!</p>
         </div>
@@ -35,7 +37,9 @@
                 <input type="number" id="accountNumber" placeholder="zadejte číslo účtu bez předčíslí (povinné pole)" maxlength="10" inputmode="numeric">
 
                 <label for="bankCode"><i class="fas fa-university"></i> Kód banky <span class="text-danger">*</span></label>
-                <input type="number" id="bankCode" placeholder="zadejte kód banky (povinné pole)" maxlength="4" inputmode="numeric">
+                <select id="bankCode">
+                    <option value="" disabled selected>Vyberte kód banky</option>
+                </select>
 
                 <label for="amount"><i class="fas fa-money-bill-wave"></i> Částka v Kč</label>
                 <input type="number" id="amount" placeholder="0" maxlength="10" inputmode="numeric">
@@ -52,9 +56,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- QRCode.js -->
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <!-- pdfmake Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.2/vfs_fonts.js"></script>
     <!-- Custom JS -->
     <script src="./script.js"></script>
 </body>

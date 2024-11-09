@@ -1,3 +1,11 @@
+/* Global Box-sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #0288d1;
@@ -26,23 +34,24 @@ body {
     text-align: center;
 }
 
+/* Container Styles */
 .container {
     display: flex;
+    flex-wrap: nowrap;
     width: 100%;
-    min-width: 320px;
     max-width: 1200px;
     background: white;
     border-radius: 25px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    margin: 12px;
+    margin: 12px auto;
 }
 
 .left-panel,
 .right-panel {
-    flex: 1 1 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
     padding: 20px;
-    box-sizing: border-box;
 }
 
 .left-panel {
@@ -52,14 +61,12 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 700px;
 }
 
 #qrcode {
-    width: 370px;
-    height: 370px;
+    width: 100%;
     max-width: 370px;
-    max-height: 370px;
+    height: auto;
     background: transparent;
     margin-top: 20px;
     animation: bounceIn 1s ease;
@@ -67,6 +74,7 @@ body {
 
 #qrcode img {
     width: 100%;
+    height: auto;
 }
 
 #qrStringOutput {
@@ -74,12 +82,13 @@ body {
     margin-top: 20px;
 }
 
+/* Disclaimer Styles */
 .disclaimer {
     font-size: 12px;
     color: #777;
     text-align: center;
     padding: 10px;
-    width: 90%; /* Adjusted for mobile responsiveness */
+    width: 90%;
     position: absolute;
     bottom: 20px;
 }
@@ -103,6 +112,7 @@ h2 {
     text-align: center;
 }
 
+/* Form Styles */
 form {
     display: flex;
     flex-direction: column;
@@ -114,16 +124,17 @@ form label {
     margin-top: 12px;
     text-align: left;
     display: flex;
-    align-items: center; /* Align icons with text */
+    align-items: center;
 }
 
 form label i {
     margin-right: 8px;
     color: #5a5a5a;
-    font-size: 14px; /* Adjust this value to make the icons smaller */
+    font-size: 14px;
 }
 
-form input {
+form input,
+form select {
     padding: 10px;
     margin-top: 5px;
     border: none;
@@ -132,9 +143,12 @@ form input {
     outline: none;
     font-size: 15px;
     color: #5f5f5f;
+    width: 100%;
+    max-width: 100%;
 }
 
-form input:focus {
+form input:focus,
+form select:focus {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
@@ -143,6 +157,20 @@ form input:focus {
     margin-left: 4px;
 }
 
+/* Style the select dropdown */
+form select {
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4.1 6.5"><path fill="%235f5f5f" d="M2.1 6.5L0 4.4l.6-.6 1.5 1.5 1.5-1.5.6.6z"/><path fill="%235f5f5f" d="M2 0L0 2.1l.6.6L2 1.2l1.5 1.5.6-.6z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px; /* Adjust padding to account for dropdown arrow */
+}
+
+/* Button Styles */
 button {
     padding: 15px;
     background-color: #0b9bdd;
@@ -173,7 +201,7 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-/* New bounceIn animation */
+/* BounceIn Animation */
 @keyframes bounceIn {
     0% {
         opacity: 0;
@@ -191,33 +219,30 @@ input[type="number"] {
     }
 }
 
-/* Responsive adjustments for mobile devices */
+/* Responsive Adjustments for Mobile Devices */
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-        margin: 10px;
     }
 
-    .left-panel {
-        padding: 10px;
-        align-items: center;
-        justify-content: center;
-        min-height: auto;
+    .left-panel,
+    .right-panel {
+        flex: 0 0 100%;
+        max-width: 100%;
     }
 
     #qrcode {
         width: 80vw;
-        height: 80vw;
         max-width: 300px;
-        max-height: 300px;
-        margin-top: 20px;
     }
+}
 
-    .disclaimer {
-        padding: 10px;
-        position: relative;
-        margin-top: 20px; /* Spacing below QR code */
-        bottom: 0;
-        text-align: center;
-    }
+/* Download Link Styling */
+#downloadPdfLink {
+    margin-top: 40px;
+    font-size: small;
+    font-weight: lighter;
+    color: rgba(78, 78, 230, 0.772);
+    text-decoration: underline;
+    cursor: pointer;
 }
