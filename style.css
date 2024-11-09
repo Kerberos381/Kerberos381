@@ -170,6 +170,49 @@ form select {
     padding-right: 30px; /* Adjust padding to account for dropdown arrow */
 }
 
+/* Symbol Fields Container */
+.symbol-fields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.symbol-field {
+    flex: 1 1 30%;
+    min-width: 100px;
+    max-width: 30%;
+    margin-right: 10px;
+}
+
+.symbol-field:last-child {
+    margin-right: 0;
+}
+
+.symbol-field label {
+    display: block;
+    font-weight: bold;
+    color: #5a5a5a;
+    margin-top: 0;
+}
+
+.symbol-field input {
+    width: 100%;
+    margin-top: 5px;
+}
+
+/* Responsive Adjustments for Symbol Fields */
+@media (max-width: 767px) {
+    .symbol-fields {
+        flex-direction: column;
+    }
+
+    .symbol-field {
+        max-width: 100%;
+        margin-right: 0;
+    }
+}
+
 /* Button Styles */
 button {
     padding: 15px;

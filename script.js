@@ -9,8 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const receiverNameInput = document.getElementById("receiverName");
     const prefixInput = document.getElementById("prefix");
     const accountNumberInput = document.getElementById("accountNumber");
-    const bankCodeSelect = document.getElementById("bankCode"); // Updated variable
+    const bankCodeSelect = document.getElementById("bankCode");
     const variableSymbolInput = document.getElementById("variableSymbol");
+    const constantSymbolInput = document.getElementById("constantSymbol"); // New
+    const specificSymbolInput = document.getElementById("specificSymbol"); // New
     const messageInput = document.getElementById("message");
     const amountInput = document.getElementById("amount");
 
@@ -86,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (data.receiverName) qrString += `*RN:${data.receiverName}`;
         if (data.variableSymbol) qrString += `*X-VS:${data.variableSymbol}`;
+        if (data.constantSymbol) qrString += `*X-KS:${data.constantSymbol}`; // New
+        if (data.specificSymbol) qrString += `*X-SS:${data.specificSymbol}`; // New
         if (data.message) qrString += `*MSG:${data.message}`;
 
         // Include the payment type as instant payment
@@ -101,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             data.forEach(bank => {
                 const option = document.createElement('option');
                 option.value = bank.code;
-                option.textContent = `${bank.code} (${bank.name})`;
+                option.textContent = `${bank.name} (${bank.code})`;
                 bankCodeSelect.appendChild(option);
             });
         })
@@ -152,6 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
             accountNumber: accountNumberInput.value,
             bankCode: bankCodeSelect.value,
             variableSymbol: variableSymbolInput.value,
+            constantSymbol: constantSymbolInput.value, // New
+            specificSymbol: specificSymbolInput.value, // New
             message: messageInput.value,
             amount: amountInput.value || "0"
         };
@@ -233,6 +239,8 @@ document.addEventListener("DOMContentLoaded", function () {
             { label: "Kód banky", value: bankCodeSelect.options[bankCodeSelect.selectedIndex].text },
             { label: "Částka v Kč", value: amountInput.value },
             { label: "Variabilní symbol", value: variableSymbolInput.value },
+            { label: "Konstantní symbol", value: constantSymbolInput.value }, // New
+            { label: "Specifický symbol", value: specificSymbolInput.value }, // New
             { label: "Zpráva pro příjemce", value: messageInput.value },
         ];
 

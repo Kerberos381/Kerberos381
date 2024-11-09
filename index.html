@@ -44,8 +44,26 @@
                 <label for="amount"><i class="fas fa-money-bill-wave"></i> Částka v Kč</label>
                 <input type="number" id="amount" placeholder="0" maxlength="10" inputmode="numeric">
 
-                <label for="variableSymbol"><i class="fas fa-tag"></i> Variabilní symbol</label>
-                <input type="text" id="variableSymbol" placeholder="zadejte var symbol (nepovinné)" maxlength="10" inputmode="numeric">
+                <!-- Symbol Fields Container -->
+                <div class="symbol-fields">
+                    <!-- Variabilní symbol -->
+                    <div class="symbol-field">
+                        <label for="variableSymbol"><i class="fas fa-tag"></i> VS</label>
+                        <input type="text" id="variableSymbol" placeholder="Variabliní symbol" maxlength="10" inputmode="numeric">
+                    </div>
+
+                    <!-- Konstantní symbol -->
+                    <div class="symbol-field">
+                        <label for="constantSymbol"><i class="fas fa-tag"></i> KS</label>
+                        <input type="text" id="constantSymbol" placeholder="Konstatní symbol" maxlength="10" inputmode="numeric">
+                    </div>
+
+                    <!-- Specifický symbol -->
+                    <div class="symbol-field">
+                        <label for="specificSymbol"><i class="fas fa-tag"></i> SS</label>
+                        <input type="text" id="specificSymbol" placeholder="Specifický symbol" maxlength="10" inputmode="numeric">
+                    </div>
+                </div>
 
                 <label for="message"><i class="fas fa-envelope"></i> Zpráva pro příjemce</label>
                 <input type="text" id="message" placeholder="zpráva" maxlength="60">
