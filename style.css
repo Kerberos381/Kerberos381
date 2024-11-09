@@ -35,13 +35,11 @@ body {
     border-radius: 25px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    margin-left: 12px;
-    margin-right: 12px;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    margin: 12px;
 }
 
-.left-panel, .right-panel {
+.left-panel,
+.right-panel {
     flex: 1 1 50%;
     padding: 20px;
     box-sizing: border-box;
@@ -64,11 +62,11 @@ body {
     max-height: 370px;
     background: transparent;
     margin-top: 20px;
-    animation: zoomBounce 0.8s ease-out;
+    animation: fadeInUp 0.6s ease-out;
+}
 
-    img {
-        width: 100%;
-    }
+#qrcode img {
+    width: 100%;
 }
 
 #qrStringOutput {
@@ -115,6 +113,14 @@ form label {
     color: #5a5a5a;
     margin-top: 12px;
     text-align: left;
+    display: flex;
+    align-items: center; /* Align icons with text */
+}
+
+form label i {
+    margin-right: 8px;
+    color: #5a5a5a;
+    font-size: 14px; /* Adjust this value to make the icons smaller */
 }
 
 form input {
@@ -132,39 +138,50 @@ form input:focus {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.text-danger {
+    color: red;
+    margin-left: 4px;
+}
+
 button {
     padding: 15px;
-    background-color: #29b6f6;
+    background-color: #0b9bdd;
     color: white;
     border: none;
     border-radius: 5px;
     max-width: 300px;
     min-width: 150px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
     font-size: 16px;
     margin: 30px auto;
     display: block;
 }
 
 button:hover {
-    background-color: #0288d1;
+    background-color: #0056b3;
 }
 
-/* QR code animation */
-@keyframes zoomBounce {
+/* Hide arrows in number input fields */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* New fadeInUp animation */
+@keyframes fadeInUp {
     0% {
         opacity: 0;
-        transform: scale(0.5);
-    }
-    40% {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-    80% {
-        transform: scale(0.95);
+        transform: translateY(20px);
     }
     100% {
-        transform: scale(1);
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -172,7 +189,7 @@ button:hover {
 @media (max-width: 767px) {
     .container {
         flex-direction: column;
-       margin: 10px;
+        margin: 10px;
     }
 
     .left-panel {

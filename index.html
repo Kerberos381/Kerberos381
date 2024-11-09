@@ -7,28 +7,9 @@
     <meta name="description" content="Generátor platebních QR kódů pro snadné vytvoření platebního QR kódu. Rychlé a snadné použití pro platby.">
     <meta name="keywords" content="platební QR kód, vytvoření platebního QR kódu, generátor QR kódů, QR platba">
     <link rel="stylesheet" href="./style.css">
-    
-    <!-- Open Graph for Social Media Sharing -->
-    <meta property="og:title" content="Generátor platebních QR kódů">
-    <meta property="og:description" content="Vytvořte si platební QR kód rychle a snadno pomocí našeho online generátoru QR kódů.">
-    <meta property="og:image" content="https://yourwebsite.com/image.jpg">
-    <meta property="og:url" content="https://yourwebsite.com/page-url">
-    
-    <!-- Twitter Card for Twitter Sharing -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Generátor platebních QR kódů">
-    <meta name="twitter:description" content="Snadné vytvoření platebního QR kódu online.">
-    <meta name="twitter:image" content="https://yourwebsite.com/image.jpg">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-16QYV0FXQ4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-16QYV0FXQ4');
-</script>
 <body>
     <!-- Info Button in the Top-Right Corner -->
     <button id="infoButton">i</button>
@@ -44,25 +25,25 @@
             <h2>VÁŠ OSOBNÍ PLATEBNÍ QR KÓD</h2>
             <form id="qrForm">
 
-                <label>Název příjemce</label> <!-- Receiver Name -->
+                <label for="receiverName"><i class="fas fa-user"></i> Název příjemce</label>
                 <input type="text" id="receiverName" placeholder="zadejte název příjemce" maxlength="60">
 
-                <label>Předčíslí účtu</label>
+                <label for="prefix"><i class="fas fa-list-ol"></i> Předčíslí účtu</label>
                 <input type="number" id="prefix" placeholder="zde zadejte předčíslí" maxlength="6" inputmode="numeric">
 
-                <label>Číslo účtu</label>
+                <label for="accountNumber"><i class="fas fa-hashtag"></i> Číslo účtu <span class="text-danger">*</span></label>
                 <input type="number" id="accountNumber" placeholder="zadejte číslo účtu bez předčíslí (povinné pole)" maxlength="10" inputmode="numeric">
 
-                <label>Kód Banky</label>
-                <input type="number"  id="bankCode" placeholder="zadejte kód banky (povinné pole)" maxlength="4" inputmode="numeric">
+                <label for="bankCode"><i class="fas fa-university"></i> Kód banky <span class="text-danger">*</span></label>
+                <input type="number" id="bankCode" placeholder="zadejte kód banky (povinné pole)" maxlength="4" inputmode="numeric">
 
-                <label>Částka v Kč</label>
-                <input type="number"  id="amount" placeholder="0" maxlength="10" inputmode="numeric">
+                <label for="amount"><i class="fas fa-money-bill-wave"></i> Částka v Kč</label>
+                <input type="number" id="amount" placeholder="0" maxlength="10" inputmode="numeric">
 
-                <label>Variabilní symbol</label>
+                <label for="variableSymbol"><i class="fas fa-tag"></i> Variabilní symbol</label>
                 <input type="text" id="variableSymbol" placeholder="zadejte var symbol (nepovinné)" maxlength="10" inputmode="numeric">
 
-                <label>Zpráva pro příjemce</label>
+                <label for="message"><i class="fas fa-envelope"></i> Zpráva pro příjemce</label>
                 <input type="text" id="message" placeholder="zpráva" maxlength="60">
                 
                 <button type="submit" id="generateBtn">Generovat QR Kód</button>
@@ -70,8 +51,11 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- QRCode.js -->
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <!-- Custom JS -->
     <script src="./script.js"></script>
 </body>
 </html>

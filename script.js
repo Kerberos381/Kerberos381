@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Map of special characters to replacements
     const characterMap = {
-        'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n', 
+        'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n',
         'ó': 'o', 'ř': 'r', 'š': 's', 'ť': 't', 'ú': 'u', 'ů': 'u', 'ý': 'y', 'ž': 'z'
     };
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateText(text) {
         const unsupportedChars = text.match(/[^\w\s]/g) || [];
         const unsupported = unsupportedChars.filter(char => !characterMap[char]);
-        
+
         if (unsupported.length > 0) {
             alert(`Unsupported characters detected: ${unsupported.join(", ")}`);
             return false;
@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
         qrCodeContainer.innerHTML = ""; // Clear previous QR code
 
         qrCodeContainer.style.animation = "none";
-        setTimeout(() => qrCodeContainer.style.animation = "zoomBounce 0.8s ease-out", 10);
+        setTimeout(() => {
+            qrCodeContainer.style.animation = "fadeInUp 0.6s ease-out";
+        }, 10);
 
         const qrCodeSize = window.innerWidth < 768 ? 250 : 370;
 
@@ -52,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const paddedAccountNumber = accountNumber.padStart(10, '0');
         const bban = `${bankCode}${paddedPrefix}${paddedAccountNumber}`;
         const numericIBAN = `${bban}123500`;
-        
+
         try {
             const checksum = 98n - BigInt(numericIBAN) % 97n;
             const checkDigits = checksum.toString().padStart(2, '0');
@@ -77,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return qrString;
     }
 
+    // Initial QR code
     generateQRCode("HELLO STRANGER");
 
     generateBtn.addEventListener("click", function (event) {
@@ -84,17 +87,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const mandatoryFields = [
             { id: "accountNumber", name: "Číslo účtu" },
-            { id: "bankCode", name: "Kód Banky" },
+            { id: "bankCode", name: "Kód banky" },
         ];
         let allFieldsFilled = true;
         let missingFields = [];
 
+        // Reset input styles
         mandatoryFields.forEach(field => {
             const input = document.getElementById(field.id);
             input.style.border = "none";
-            input.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.1)";
+            input.style.boxShadow = "0 2px 3px rgba(0, 0, 0, 0.1)";
         });
 
+        // Validate mandatory fields
         mandatoryFields.forEach(field => {
             const input = document.getElementById(field.id);
             if (!input.value.trim()) {
@@ -132,9 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const qrString = generateQRString(data);
         if (qrString) {
             generateQRCode(qrString);
-            window.scrollTo(0, 0);
-            // Scroll to #root
-
+            // Smooth scrolling to the top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     });
 
