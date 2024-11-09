@@ -35,6 +35,10 @@ body {
     border-radius: 25px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 .left-panel, .right-panel {
