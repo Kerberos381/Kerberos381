@@ -62,7 +62,7 @@ body {
     max-height: 370px;
     background: transparent;
     margin-top: 20px;
-    animation: fadeInUp 0.6s ease-out;
+    animation: bounceIn 1s ease;
 }
 
 #qrcode img {
@@ -173,15 +173,21 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-/* New fadeInUp animation */
-@keyframes fadeInUp {
+/* New bounceIn animation */
+@keyframes bounceIn {
     0% {
         opacity: 0;
-        transform: translateY(20px);
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
     }
     100% {
-        opacity: 1;
-        transform: translateY(0);
+        transform: scale(1);
     }
 }
 

@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function generateQRCode(text) {
         qrCodeContainer.innerHTML = ""; // Clear previous QR code
 
+        // Reset animation
         qrCodeContainer.style.animation = "none";
-        setTimeout(() => {
-            qrCodeContainer.style.animation = "fadeInUp 0.6s ease-out";
-        }, 10);
+        void qrCodeContainer.offsetWidth; // Trigger reflow to reset animation
+        qrCodeContainer.style.animation = "bounceIn 1s ease";
 
         const qrCodeSize = window.innerWidth < 768 ? 250 : 370;
 
