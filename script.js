@@ -4,6 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const qrStringOutput = document.getElementById("qrStringOutput");
     const infoButton = document.getElementById("infoButton");
 
+    // Input fields
+    const receiverNameInput = document.getElementById("receiverName");
+    const prefixInput = document.getElementById("prefix");
+    const accountNumberInput = document.getElementById("accountNumber");
+    const bankCodeInput = document.getElementById("bankCode");
+    const variableSymbolInput = document.getElementById("variableSymbol");
+    const messageInput = document.getElementById("message");
+    const amountInput = document.getElementById("amount");
+
     // Map of special characters to replacements
     const characterMap = {
         'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n',
@@ -21,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const unsupported = unsupportedChars.filter(char => !characterMap[char]);
 
         if (unsupported.length > 0) {
-            alert(`Unsupported characters detected: ${unsupported.join(", ")}`);
+            alert(`Nepodporované znaky byly detekovány: ${unsupported.join(", ")}`);
             return false;
         }
         return true;
@@ -61,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return `CZ${checkDigits}${bban}`;
         } catch (error) {
             console.error("Error calculating IBAN:", error);
-            alert("Failed to calculate IBAN. Please check your input.");
+            alert("Nepodařilo se vypočítat IBAN. Zkontrolujte prosím své údaje.");
             return null;
         }
     }
@@ -75,6 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (data.receiverName) qrString += `*RN:${data.receiverName}`;
         if (data.variableSymbol) qrString += `*X-VS:${data.variableSymbol}`;
         if (data.message) qrString += `*MSG:${data.message}`;
+
+        // Include the payment type as instant payment
+        qrString += `*PT:IP`;
 
         return qrString;
     }
@@ -116,13 +128,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         let data = {
-            receiverName: document.getElementById("receiverName").value || "",
-            prefix: document.getElementById("prefix").value || "",
-            accountNumber: document.getElementById("accountNumber").value,
-            bankCode: document.getElementById("bankCode").value,
-            variableSymbol: document.getElementById("variableSymbol").value,
-            message: document.getElementById("message").value,
-            amount: document.getElementById("amount").value || "0"
+            receiverName: receiverNameInput.value || "",
+            prefix: prefixInput.value || "",
+            accountNumber: accountNumberInput.value,
+            bankCode: bankCodeInput.value,
+            variableSymbol: variableSymbolInput.value,
+            message: messageInput.value,
+            amount: amountInput.value || "0"
         };
 
         // Replace unsupported characters in receiverName and message
@@ -145,4 +157,53 @@ document.addEventListener("DOMContentLoaded", function () {
     infoButton.addEventListener("click", () => {
         qrStringOutput.style.display = qrStringOutput.style.display === "none" ? "block" : "none";
     });
+
+    // Function to show error messages
+    function showError(inputId, message) {
+        const inputField = document.getElementById(inputId);
+        let errorElement = inputField.nextElementSibling;
+
+        if (!errorElement || !errorElement.classList.contains('error-message')) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            inputField.parentNode.insertBefore(errorElement, inputField.nextSibling);
+        }
+
+        errorElement.textContent = message;
+    }
+
+    // Paste event listener for account number input
+    accountNumberInput.addEventListener('paste', function (event) {
+        event.preventDefault();
+
+        // Get pasted content
+        const paste = (event.clipboardData || window.clipboardData).getData('text');
+        parseAccountNumber(paste);
+    });
+
+    // Function to parse account number
+    function parseAccountNumber(accountString) {
+        // Regular expression to match account number formats
+        const accountRegex = /^(?:(\d{0,6})-)?(\d{1,10})(?:\/(\d{4}))?$/;
+
+        const match = accountString.match(accountRegex);
+
+        if (match) {
+            const [, prefix, accountNumber, bankCode] = match;
+
+            if (prefix) {
+                prefixInput.value = prefix;
+            } else {
+                prefixInput.value = '';
+            }
+
+            accountNumberInput.value = accountNumber;
+
+            if (bankCode) {
+                bankCodeInput.value = bankCode;
+            }
+        } else {
+            alert('Formát čísla účtu není platný.');
+        }
+    }
 });
