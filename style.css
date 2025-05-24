@@ -1,3 +1,6 @@
+/* Import Modern Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* Global Box-sizing */
 *,
 *::before,
@@ -7,31 +10,38 @@
 
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #0288d1;
+    font-family: 'Inter', Arial, sans-serif; /* Updated font */
+    background-color: #f0f2f5; /* Lighter, more modern background */
     margin: 0;
-    padding: 0;
+    padding: 20px; /* Add some padding for smaller screens */
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     scroll-behavior: smooth;
+    color: #333; /* Default text color */
 }
 
 #infoButton {
     position: absolute;
-    top: 5px;
-    right: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    background-color: transparent;
-    color: rgba(255, 255, 255, 0.258);
+    top: 15px;
+    right: 15px;
+    font-size: 20px; /* Adjust if using a new icon */
+    background-color: #e9ecef; /* Softer background */
+    color: #495057; /* Darker icon color */
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px; /* Slightly smaller */
+    height: 36px;
     cursor: pointer;
-    text-align: center;
+    display: flex; /* For centering icon */
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+#infoButton:hover {
+    background-color: #dee2e6;
 }
 
 /* Container Styles */
@@ -41,23 +51,21 @@ body {
     width: 100%;
     max-width: 1200px;
     background: white;
-    border-radius: 25px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 16px; /* Updated border-radius */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
     overflow: hidden;
     margin: 12px auto;
-    margin-left: 7px;
-    margin-right: 7px;
 }
 
 .left-panel,
 .right-panel {
     flex: 0 0 50%;
     max-width: 50%;
-    padding: 20px;
+    padding: 30px; /* Increased padding */
 }
 
 .left-panel {
-    background-color: #f4f4f4;
+    background-color: #f8f9fa; /* Very light grey, or white if preferred */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,32 +75,44 @@ body {
 
 #qrcode {
     width: 100%;
-    max-width: 370px;
-    height: auto;
-    background: transparent;
+    max-width: 350px; /* Adjusted slightly if needed */
+    height: auto; /* Placeholder takes care of initial height */
     margin-top: 20px;
-    animation: bounceIn 1s ease;
+    /* animation: bounceIn 1s ease; // Animation can be kept or removed */
 }
+
+#qrcode p { /* Styling for placeholder text */
+    font-size: 1rem;
+    color: #6c757d;
+}
+
 
 #qrcode img {
     width: 100%;
     height: auto;
+    border-radius: 8px; /* Optional: round corners of QR image slightly */
 }
 
 #qrStringOutput {
-    font-weight: bold;
+    font-weight: 500; /* Using Inter's medium weight */
     margin-top: 20px;
+    font-size: 0.875rem;
+    color: #495057;
+    word-break: break-all;
+    background-color: #e9ecef;
+    padding: 8px 12px;
+    border-radius: 6px;
 }
 
 /* Disclaimer Styles */
 .disclaimer {
-    font-size: 12px;
-    color: #777;
+    font-size: 0.75rem; /* Slightly smaller */
+    color: #6c757d; /* Softer color */
     text-align: center;
     padding: 10px;
     width: 90%;
     position: absolute;
-    bottom: 20px;
+    bottom: 15px; /* Adjusted position */
 }
 
 /* Right Panel Styling */
@@ -101,17 +121,19 @@ body {
 }
 
 h3 {
-    font-size: 18px;
-    color: #878787;
-    margin: 0 auto;
+    font-size: 1.125rem; /* Slightly adjusted size */
+    color: #6c757d; /* Softer color */
+    margin: 0 auto 8px auto; /* Adjusted margin */
     text-align: center;
+    font-weight: 500;
 }
 
 h2 {
-    font-size: 24px;
-    color: #333;
-    margin: 10px auto 20px auto;
+    font-size: 1.75rem; /* Adjusted size */
+    color: #212529; /* Darker heading color */
+    margin: 0 auto 30px auto; /* Adjusted margin */
     text-align: center;
+    font-weight: 700;
 }
 
 /* Form Styles */
@@ -121,55 +143,61 @@ form {
 }
 
 form label {
-    font-weight: bold;
-    color: #5a5a5a;
-    margin-top: 12px;
+    font-weight: 500; /* Medium weight for labels */
+    color: #495057; /* Label color */
+    margin-top: 16px; /* Adjusted spacing */
+    margin-bottom: 6px; /* Space between label and input */
     text-align: left;
     display: flex;
     align-items: center;
+    font-size: 0.9rem;
 }
 
 form label i {
-    margin-right: 8px;
-    color: #5a5a5a;
-    font-size: 14px;
+    margin-right: 10px; /* Increased space for icon */
+    color: #007bff; /* Icon color - primary */
+    font-size: 1rem; /* Adjusted icon size */
+    width: 20px; /* Ensure icon alignment */
+    text-align: center;
 }
 
 form input,
 form select {
-    padding: 10px;
-    margin-top: 5px;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    padding: 12px 15px; /* Updated padding */
+    margin-top: 0; /* Removed margin-top as it's on label now */
+    border: 1px solid #ced4da; /* Modern border */
+    border-radius: 8px; /* Modern border-radius */
+    box-shadow: none; /* Removed default shadow for a flatter look */
     outline: none;
-    font-size: 15px;
-    color: #5f5f5f;
+    font-size: 1rem; /* Base font size for inputs */
+    color: #495057; /* Input text color */
     width: 100%;
-    max-width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff; /* Ensure background is white */
 }
 
 form input:focus,
 form select:focus {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-color: #007bff; /* Primary color for focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Modern focus ring */
 }
 
 .text-danger {
-    color: red;
+    color: #dc3545; /* Standard danger color */
     margin-left: 4px;
+    font-weight: 500;
 }
 
 /* Style the select dropdown */
 form select {
-    background-color: white;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4.1 6.5"><path fill="%235f5f5f" d="M2.1 6.5L0 4.4l.6-.6 1.5 1.5 1.5-1.5.6.6z"/><path fill="%235f5f5f" d="M2 0L0 2.1l.6.6L2 1.2l1.5 1.5.6-.6z"/></svg>');
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="none" stroke="%23495057" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 5l6 6 6-6"/></svg>'); /* Modernized dropdown arrow */
     background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px;
-    padding-right: 30px; /* Adjust padding to account for dropdown arrow */
+    background-position: right 15px center;
+    background-size: 16px; /* Adjusted arrow size */
+    padding-right: 40px;
 }
 
 /* Symbol Fields Container */
@@ -177,63 +205,74 @@ form select {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 12px;
+    margin-top: 16px;
+    gap: 15px; /* Use gap for spacing */
 }
 
 .symbol-field {
-    flex: 1 1 30%;
+    flex: 1 1 calc(33.333% - 10px); /* Adjust for gap */
     min-width: 100px;
-    max-width: 30%;
-    margin-right: 10px;
+    /* margin-right is replaced by gap */
 }
 
 .symbol-field:last-child {
-    margin-right: 0;
+    margin-right: 0; /* Keep if not using gap or for older browser support */
 }
 
 .symbol-field label {
-    display: block;
-    font-weight: bold;
-    color: #5a5a5a;
-    margin-top: 0;
+    margin-top: 0; /* Label is part of the field group */
+    margin-bottom: 6px;
 }
 
 .symbol-field input {
     width: 100%;
-    margin-top: 5px;
 }
 
 /* Responsive Adjustments for Symbol Fields */
 @media (max-width: 767px) {
     .symbol-fields {
         flex-direction: column;
+        gap: 0; /* Remove gap if stacking and relying on label margins */
     }
 
     .symbol-field {
         max-width: 100%;
         margin-right: 0;
+        margin-bottom: 16px; /* Add margin for stacked elements */
+    }
+    .symbol-field:last-child {
+        margin-bottom: 0;
     }
 }
 
 /* Button Styles */
-button {
-    padding: 15px;
-    background-color: #0b9bdd;
+button#generateBtn { /* Target specifically the main button */
+    padding: 12px 24px;
+    background-color: #007bff; /* Modern primary blue */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px; /* Modern border-radius */
     max-width: 300px;
     min-width: 150px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 16px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 1rem;
+    font-weight: 500; /* Medium weight */
     margin: 30px auto;
     display: block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-button:hover {
-    background-color: #0056b3;
+button#generateBtn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+
+button#generateBtn:active {
+    background-color: #004085; /* Even darker on active/click */
+    transform: translateY(1px); /* Subtle press effect */
+}
+
 
 /* Hide arrows in number input fields */
 input[type="number"]::-webkit-inner-spin-button,
@@ -246,7 +285,7 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-/* BounceIn Animation */
+/* BounceIn Animation (can be kept or removed based on preference) */
 @keyframes bounceIn {
     0% {
         opacity: 0;
@@ -266,28 +305,53 @@ input[type="number"] {
 
 /* Responsive Adjustments for Mobile Devices */
 @media (max-width: 767px) {
+    body {
+        padding: 10px; /* Reduce padding on small screens */
+    }
     .container {
         flex-direction: column;
+        margin: 10px 0; /* Adjust margin */
+        border-radius: 12px; /* Slightly smaller radius for mobile */
     }
 
     .left-panel,
     .right-panel {
         flex: 0 0 100%;
         max-width: 100%;
+        padding: 20px; /* Adjust padding */
     }
 
     #qrcode {
-        width: 80vw;
-        max-width: 300px;
+        width: 100%;
+        max-width: calc(100vw - 80px); /* Ensure it fits within padding */
+         max-height: calc(100vw - 80px);
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    h3 {
+        font-size: 1rem;
+    }
+    button#generateBtn {
+        width: 100%;
+        max-width: none;
     }
 }
 
 /* Download Link Styling */
 #downloadPdfLink {
-    margin-top: 40px;
-    font-size: small;
-    font-weight: lighter;
-    color: rgba(78, 78, 230, 0.772);
-    text-decoration: underline;
+    margin-top: 25px;
+    font-size: 0.9rem; /* Adjusted size */
+    font-weight: 500; /* Medium weight */
+    color: #007bff; /* Primary color */
+    text-decoration: none; /* Remove underline for a cleaner look */
     cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#downloadPdfLink:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Light primary background on hover */
+    text-decoration: none;
 }
