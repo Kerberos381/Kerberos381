@@ -10,35 +10,68 @@
 
 /* General Styles */
 body {
-    font-family: 'Inter', Arial, sans-serif; /* Modern sans-serif font */
-    background-color: #f0f2f5; /* Lighter, more contemporary page background */
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f0f2f5;
     margin: 0;
-    padding: 20px; /* Add some padding for smaller screens / better framing */
+    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     scroll-behavior: smooth;
-    color: #333; /* Default text color */
+    color: #333;
+    overflow-x: hidden; /* Prevent horizontal scrollbars from slide-in animations */
 }
+
+/* New Animations Keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes subtlePulse { /* For button hover or important elements */
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+/* QR Code specific subtle fade for updates */
+@keyframes qrFadeInOut {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 1; } /* Keep it visible */
+}
+
 
 #infoButton {
     position: absolute;
     top: 15px;
     right: 15px;
-    font-size: 1.1rem; /* Adjusted for icon if using Font Awesome */
-    background-color: #ffffff; /* Clearer background */
-    color: #495057; /* Darker icon color for better contrast */
-    border: 1px solid #dee2e6; /* Subtle border */
+    font-size: 1.1rem;
+    background-color: #ffffff;
+    color: #495057;
+    border: 1px solid #dee2e6;
     border-radius: 50%;
-    width: 40px; /* Maintained size */
-    height: 40px; /* Maintained size */
+    width: 40px;
+    height: 40px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    animation: fadeIn 0.5s ease-out 0.5s backwards; /* Fade in after container */
 }
 
 #infoButton:hover {
@@ -51,66 +84,73 @@ body {
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
-    max-width: 1200px; /* Maintained max-width */
+    max-width: 1200px;
     background: white;
-    border-radius: 16px; /* More modern, larger radius */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Softer, more diffused shadow */
-    overflow: hidden;
-    margin: 12px auto; /* Maintained margin */
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Important for child animations if they overflow */
+    margin: 12px auto;
+    animation: fadeIn 0.5s ease-out, slideInUp 0.5s ease-out; /* Container fades and slides in */
 }
 
 .left-panel,
 .right-panel {
     flex: 0 0 50%;
-    max-width: 50%; /* Maintained width */
-    padding: 35px; /* Slightly increased padding for better spacing */
+    max-width: 50%;
+    padding: 35px;
 }
 
 .left-panel {
-    background-color: #f8f9fa; /* Light, clean background for the QR section */
+    background-color: #f8f9fa;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    border-right: 1px solid #e9ecef; /* Subtle separator */
+    border-right: 1px solid #e9ecef;
 }
 
 #qrcode {
     width: 100%;
-    max-width: 370px; /* Maintained max-width */
-    height: auto;
+    max-width: 370px;
+    height: auto; /* Will be set by content or min-height if desired */
+    min-height: 370px; /* Ensure space is reserved, adjust if needed */
     margin-top: 20px;
-    /* animation: bounceIn 1s ease; /* Retained animation */
+    display: flex; /* To center placeholder text */
+    align-items: center;
+    justify-content: center;
+    /* bounceIn animation will be controlled by JS */
 }
 
-/* Placeholder text styling within the QR code div */
+/* Styling for placeholder text if QR code is not yet generated or fails */
 #qrcode p {
     font-size: 1rem;
     color: #6c757d;
     text-align: center;
+    padding: 20px;
 }
 
 #qrcode img {
     width: 100%;
     height: auto;
-    border-radius: 8px; /* Slightly rounded corners for the QR image itself */
+    border-radius: 8px;
+    display: block; /* Prevents extra space below image */
 }
 
 #qrStringOutput {
-    font-weight: 500; /* Inter font medium weight */
+    font-weight: 500;
     margin-top: 20px;
-    font-size: 0.8rem; /* Slightly smaller for better fit if string is long */
+    font-size: 0.8rem;
     color: #495057;
     word-break: break-all;
-    background-color: #e9ecef; /* Light background for the string */
+    background-color: #e9ecef;
     padding: 10px 15px;
     border-radius: 6px;
     text-align: center;
     max-width: 90%;
+    animation: fadeIn 0.3s ease-out; /* Fade in when shown */
 }
 
-/* Disclaimer Styles */
 .disclaimer {
     font-size: 0.75rem;
     color: #6c757d;
@@ -121,104 +161,115 @@ body {
     bottom: 15px;
 }
 
-/* Right Panel Styling */
 .right-panel {
-    padding: 40px; /* Maintained padding */
+    padding: 40px;
+    animation: slideInUp 0.6s ease-out 0.2s backwards; /* Right panel slides in slightly delayed */
 }
 
-h3 { /* Subtitle */
-    font-size: 1.05rem; /* Slightly adjusted */
+h3 {
+    font-size: 1.05rem;
     color: #6c757d;
     margin: 0 auto 8px auto;
     text-align: center;
-    font-weight: 500; /* Inter medium */
+    font-weight: 500;
 }
 
-h2 { /* Main Title */
-    font-size: 1.8rem; /* Slightly adjusted */
-    color: #2c3e50; /* Modern dark blue/grey */
-    margin: 0 auto 35px auto; /* Increased bottom margin */
+h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin: 0 auto 35px auto;
     text-align: center;
-    font-weight: 700; /* Inter bold */
+    font-weight: 700;
 }
 
-/* Form Styles */
 form {
     display: flex;
     flex-direction: column;
 }
 
-form label {
-    font-weight: 500; /* Inter medium */
+form label, form .symbol-field label { /* Grouping similar elements for animation */
+    font-weight: 500;
     color: #495057;
-    margin-top: 18px; /* Increased top margin for spacing */
-    margin-bottom: 8px; /* Space between label and input */
+    margin-top: 18px;
+    margin-bottom: 8px;
     text-align: left;
     display: flex;
     align-items: center;
     font-size: 0.9rem;
+    /* Example of staggered animation for labels */
+    /* animation: slideInUp 0.5s ease-out backwards; */
 }
 
-form label i { /* Icon styling */
+/* Staggered animation for form elements - can be done with JS or more complex CSS */
+form label:nth-of-type(1), form input#receiverName { animation-delay: 0.3s; }
+form label:nth-of-type(2), form input#prefix { animation-delay: 0.35s; }
+form label:nth-of-type(3), form input#accountNumber { animation-delay: 0.4s; }
+form label:nth-of-type(4), form select#bankCode { animation-delay: 0.45s; }
+form label:nth-of-type(5), form input#amount { animation-delay: 0.5s; }
+.symbol-fields { animation-delay: 0.55s; } /* Container for symbols */
+form label:nth-of-type(6), form input#message { animation-delay: 0.6s; }
+
+
+form label i {
     margin-right: 10px;
-    color: #007bff; /* Primary blue for icons */
-    font-size: 1.1rem; /* Slightly larger icons */
-    width: 22px; /* Ensure consistent alignment */
+    color: #007bff;
+    font-size: 1.1rem;
+    width: 22px;
     text-align: center;
     opacity: 0.85;
 }
 
 form input,
 form select {
-    padding: 12px 16px; /* Comfortable padding */
+    padding: 12px 16px;
     margin-top: 0;
-    border: 1px solid #ced4da; /* Standard modern border */
-    border-radius: 8px; /* Modern rounded corners */
-    box-shadow: none; /* Flatter look */
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-shadow: none;
     outline: none;
-    font-size: 0.95rem; /* Input text size */
+    font-size: 0.95rem;
     color: #495057;
     width: 100%;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     background-color: #fff;
+    /* animation: slideInUp 0.5s ease-out backwards; /* Apply to inputs too */
 }
+
 
 form input:focus,
 form select:focus {
-    border-color: #007bff; /* Primary blue focus border */
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Bootstrap-like focus ring */
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.text-danger { /* For mandatory field asterisk */
-    color: #e74c3c; /* Modern red */
+.text-danger {
+    color: #e74c3c;
     margin-left: 4px;
     font-weight: 700;
 }
 
-/* Style the select dropdown arrow */
 form select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23495057"><path d="M8 10.795l-4.95-4.95.707-.707L8 9.381l4.243-4.243.707.707L8 10.795z"/></svg>'); /* Cleaner, modern arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23495057"><path d="M8 10.795l-4.95-4.95.707-.707L8 9.381l4.243-4.243.707.707L8 10.795z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 16px center;
-    background-size: 12px; /* Adjusted arrow size */
-    padding-right: 40px; /* Ensure space for arrow */
+    background-size: 12px;
+    padding-right: 40px;
 }
 
-/* Symbol Fields Container */
 .symbol-fields {
     display: flex;
     flex-wrap: wrap;
-    /* justify-content: space-between; // Gap handles this better */
     margin-top: 18px;
-    gap: 15px; /* Modern way to space flex items */
+    gap: 15px;
+    /* animation: slideInUp 0.5s ease-out backwards; */
 }
 
 .symbol-field {
-    flex: 1 1 calc(33.333% - 10px); /* Adjust for 15px gap ( (15*2)/3 ) */
-    min-width: 100px; /* Maintained */
+    flex: 1 1 calc(33.333% - 10px);
+    min-width: 100px;
 }
 
 .symbol-field label {
@@ -230,145 +281,130 @@ form select {
     width: 100%;
 }
 
-/* Responsive Adjustments for Symbol Fields */
 @media (max-width: 767px) {
     .symbol-fields {
         flex-direction: column;
-        gap: 0; /* Remove column gap, rely on label margins */
+        gap: 0;
     }
-
     .symbol-field {
         max-width: 100%;
-        margin-bottom: 18px; /* Space between stacked symbol fields */
+        margin-bottom: 18px;
     }
-    .symbol-field:last-child {
-        margin-bottom: 0;
-    }
+    .symbol-field:last-child { margin-bottom: 0; }
 }
 
-/* Button Styles */
 button#generateBtn {
-    padding: 14px 28px; /* Generous padding */
-    background-color: #007bff; /* Primary blue */
+    padding: 14px 28px;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 8px;
-    max-width: 320px; /* Maintained */
-    min-width: 180px; /* Maintained */
+    max-width: 320px;
+    min-width: 180px;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
     font-size: 1rem;
-    font-weight: 600; /* Inter semi-bold */
-    margin: 40px auto 10px auto; /* Adjusted margin */
+    font-weight: 600;
+    margin: 40px auto 10px auto;
     display: block;
-    text-transform: uppercase; /* Optional: for a more "button" feel */
-    letter-spacing: 0.5px; /* Optional */
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2); /* Subtle shadow related to button color */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+    animation: slideInUp 0.5s ease-out 0.7s backwards; /* Button appears last */
 }
 
 button#generateBtn:hover {
-    background-color: #0069d9; /* Slightly darker blue on hover */
+    background-color: #0069d9;
     box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
-    transform: translateY(-1px); /* Slight lift effect */
+    transform: translateY(-1px);
+    /* animation: subtlePulse 1.5s infinite ease-in-out; /* Optional hover pulse */
 }
 
 button#generateBtn:active {
     background-color: #0056b3;
-    transform: translateY(0px); /* Press effect */
+    transform: translateY(0px);
     box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
 }
 
-
-/* Hide arrows in number input fields */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+input[type="number"] { -moz-appearance: textfield; }
 
-input[type="number"] {
-    -moz-appearance: textfield; /* Firefox */
-}
-
-/* BounceIn Animation (Retained) */
+/* Original BounceIn Animation - can be used selectively by JS */
 @keyframes bounceIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    70% {
-        transform: scale(0.9);
-    }
-    100% {
-        transform: scale(1);
-    }
+    0% { opacity: 0; transform: scale(0.3); }
+    50% { opacity: 1; transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
 }
 
-/* Responsive Adjustments for Mobile Devices */
 @media (max-width: 767px) {
-    body {
-        padding: 10px; /* Reduced body padding on small screens */
-    }
+    body { padding: 10px; }
     .container {
         flex-direction: column;
         margin: 10px 0;
         border-radius: 12px;
+        animation: none; /* Disable container animation on mobile if too much */
     }
+    .right-panel { animation: none; } /* Disable panel animation on mobile */
 
-    .left-panel,
-    .right-panel {
+
+    .left-panel, .right-panel {
         flex: 0 0 100%;
         max-width: 100%;
-        padding: 20px; /* Reduced padding inside panels for mobile */
+        padding: 20px;
     }
     .left-panel {
-        border-right: none; /* No right border when stacked */
-        border-bottom: 1px solid #e9ecef; /* Bottom border instead */
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        min-height: auto; /* Adjust min-height for mobile if #qrcode sets it */
     }
-
     #qrcode {
-        width: 100%; /* Make QR responsive within its container */
-        max-width: calc(100vw - 80px); /* Ensure it fits with padding */
-        max-height: calc(100vw - 80px); /* Maintain aspect ratio if possible */
+        width: 100%;
+        max-width: calc(100vw - 80px);
+        max-height: calc(100vw - 80px);
+        min-height: 250px; /* Or smaller for mobile */
     }
-    h2 {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
-    }
-    h3 {
-        font-size: 1rem;
-    }
+    h2 { font-size: 1.5rem; margin-bottom: 25px; }
+    h3 { font-size: 1rem; }
     button#generateBtn {
         width: 100%;
-        max-width: none; /* Full width button on mobile */
+        max-width: none;
         padding: 15px;
+        animation: none; /* Disable button animation on mobile */
     }
-    #qrStringOutput {
-        font-size: 0.75rem;
-    }
+    #qrStringOutput { font-size: 0.75rem; }
+    /* Disable staggered form animations on mobile if they feel too slow/heavy */
+    form label, form input, form select, .symbol-fields { animation: none !important; }
 }
 
-/* Download Link Styling */
 #downloadPdfLink {
-    margin-top: 30px; /* Increased spacing */
+    margin-top: 30px;
     font-size: 0.9rem;
-    font-weight: 500; /* Inter medium */
-    color: #007bff; /* Primary blue */
-    text-decoration: none; /* Cleaner without underline */
+    font-weight: 500;
+    color: #007bff;
+    text-decoration: none;
     cursor: pointer;
-    padding: 10px 15px; /* Make it more button-like */
+    padding: 10px 15px;
     border-radius: 6px;
     transition: background-color 0.2s ease, color 0.2s ease;
-    border: 1px solid transparent; /* For hover effect */
+    border: 1px solid transparent;
+    animation: fadeIn 0.5s ease-out 0.6s backwards; /* Fade in after QR space is clear */
 }
 
 #downloadPdfLink:hover {
-    background-color: rgba(0, 123, 255, 0.08); /* Very light blue background on hover */
+    background-color: rgba(0, 123, 255, 0.08);
     border-color: rgba(0, 123, 255, 0.2);
-    /* color: #0056b3; */ /* Optional: Darker text on hover */
+}
+
+/* Class to trigger QR specific animation via JS */
+.qr-code-enter {
+    animation: bounceIn 1s ease !important;
+}
+.qr-code-update {
+    animation: qrFadeInOut 0.7s ease !important;
 }
 
