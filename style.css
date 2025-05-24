@@ -130,12 +130,15 @@ body {
     padding: 20px;
 }
 
-#qrcode img {
+#qrcode img, #qrcode canvas { /* Apply to canvas as well */
     width: 100%;
     height: auto;
+    max-width: 100%; /* Ensure it doesn't overflow its container */
     border-radius: 8px;
     display: block; /* Prevents extra space below image */
+    margin: auto; /* Center if actual size is less than container width */
 }
+
 
 #qrStringOutput {
     font-weight: 500;
@@ -284,11 +287,11 @@ form select {
 @media (max-width: 767px) {
     .symbol-fields {
         flex-direction: column;
-        gap: 0;
+        gap: 0; /* Remove gap if items are stacked and rely on margin-bottom */
     }
     .symbol-field {
         max-width: 100%;
-        margin-bottom: 18px;
+        margin-bottom: 15px; /* Adjust from 18px for tighter spacing */
     }
     .symbol-field:last-child { margin-bottom: 0; }
 }
@@ -342,44 +345,107 @@ input[type="number"] { -moz-appearance: textfield; }
 }
 
 @media (max-width: 767px) {
-    body { padding: 10px; }
+    body {
+        padding: 10px;
+    }
     .container {
         flex-direction: column;
         margin: 10px 0;
         border-radius: 12px;
         animation: none; /* Disable container animation on mobile if too much */
     }
-    .right-panel { animation: none; } /* Disable panel animation on mobile */
-
+    .right-panel {
+        animation: none; /* Disable panel animation on mobile */
+        padding: 20px 15px; /* Adjusted horizontal padding */
+    }
 
     .left-panel, .right-panel {
         flex: 0 0 100%;
         max-width: 100%;
-        padding: 20px;
+        padding: 20px; /* Base padding */
     }
     .left-panel {
         border-right: none;
         border-bottom: 1px solid #e9ecef;
         min-height: auto; /* Adjust min-height for mobile if #qrcode sets it */
+        padding-bottom: 20px; /* Add some padding if content is short */
     }
+
     #qrcode {
-        width: 100%;
-        max-width: calc(100vw - 80px);
-        max-height: calc(100vw - 80px);
-        min-height: 250px; /* Or smaller for mobile */
+        width: 100%; /* Ensure it tries to take full width of its container */
+        max-width: calc(100vw - 40px); /* Adjusted from 80px to leave less horizontal margin if body padding is 10px (20+20) */
+        /* max-height: calc(100vw - 40px); /* Maintain aspect ratio, might be better handled by JS setting square dimensions */
+        min-height: 200px; /* Slightly reduce default min-height for mobile */
+        /* display: flex; align-items: center; justify-content: center; are already set globally */
     }
-    h2 { font-size: 1.5rem; margin-bottom: 25px; }
-    h3 { font-size: 1rem; }
+
+    #qrcode img, #qrcode canvas { /* Ensure canvas also scales and centers */
+        max-width: 100%;
+        height: auto !important; /* Important to override library inline styles if any */
+        display: block;
+        margin: auto; /* Center the QR code if its actual size is less than container */
+    }
+
+    #qrcode p { /* Placeholder text */
+        font-size: 0.9rem; /* Ensure readable */
+        padding: 15px; /* Adjust padding */
+        margin-top: 0; /* Adjust if #qrcode already provides centering and spacing */
+    }
+
+    h2 {
+        font-size: 1.4rem; /* Slightly smaller */
+        margin-bottom: 20px;
+    }
+    h3 {
+        font-size: 0.95rem; /* Slightly smaller */
+        margin-bottom: 6px;
+    }
+
+    form label, form .symbol-field label {
+        font-size: 0.85rem; /* Slightly smaller labels on mobile */
+        margin-top: 15px; /* Adjust spacing */
+        margin-bottom: 6px;
+    }
+
+    form input,
+    form select {
+        padding: 10px 12px; /* Adjust padding in inputs */
+        font-size: 0.9rem; /* Slightly smaller input text */
+    }
+
+
     button#generateBtn {
         width: 100%;
         max-width: none;
-        padding: 15px;
+        padding: 12px; /* Adjust button padding */
+        font-size: 0.95rem;
+        margin-top: 25px; /* Adjust top margin */
         animation: none; /* Disable button animation on mobile */
     }
-    #qrStringOutput { font-size: 0.75rem; }
+    #qrStringOutput {
+        font-size: 0.7rem; /* Smaller QR string output */
+        max-width: 100%; /* Allow it to use full width if needed */
+    }
     /* Disable staggered form animations on mobile if they feel too slow/heavy */
     form label, form input, form select, .symbol-fields { animation: none !important; }
+
+    .disclaimer {
+        font-size: 0.7rem; /* Smaller disclaimer text */
+        padding: 5px;
+        position: relative; /* Change from absolute to flow normally on mobile */
+        bottom: auto;
+        margin-top: 15px;
+        width: 100%;
+    }
+
+    #downloadPdfLink {
+        margin-top: 20px; /* Adjust spacing */
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        animation: none !important;
+    }
 }
+
 
 #downloadPdfLink {
     margin-top: 30px;
@@ -407,4 +473,3 @@ input[type="number"] { -moz-appearance: textfield; }
 .qr-code-update {
     animation: qrFadeInOut 0.7s ease !important;
 }
-
