@@ -10,10 +10,10 @@
 
 /* General Styles */
 body {
-    font-family: 'Inter', Arial, sans-serif; /* Updated font */
-    background-color: #f0f2f5; /* Lighter, more modern background */
+    font-family: 'Inter', Arial, sans-serif; /* Modern sans-serif font */
+    background-color: #f0f2f5; /* Lighter, more contemporary page background */
     margin: 0;
-    padding: 20px; /* Add some padding for smaller screens */
+    padding: 20px; /* Add some padding for smaller screens / better framing */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,22 +26,24 @@ body {
     position: absolute;
     top: 15px;
     right: 15px;
-    font-size: 20px; /* Adjust if using a new icon */
-    background-color: #e9ecef; /* Softer background */
-    color: #495057; /* Darker icon color */
-    border: none;
+    font-size: 1.1rem; /* Adjusted for icon if using Font Awesome */
+    background-color: #ffffff; /* Clearer background */
+    color: #495057; /* Darker icon color for better contrast */
+    border: 1px solid #dee2e6; /* Subtle border */
     border-radius: 50%;
-    width: 36px; /* Slightly smaller */
-    height: 36px;
+    width: 40px; /* Maintained size */
+    height: 40px; /* Maintained size */
     cursor: pointer;
-    display: flex; /* For centering icon */
+    display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 #infoButton:hover {
-    background-color: #dee2e6;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Container Styles */
@@ -49,91 +51,95 @@ body {
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1200px; /* Maintained max-width */
     background: white;
-    border-radius: 16px; /* Updated border-radius */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Softer, more modern shadow */
+    border-radius: 16px; /* More modern, larger radius */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Softer, more diffused shadow */
     overflow: hidden;
-    margin: 12px auto;
+    margin: 12px auto; /* Maintained margin */
 }
 
 .left-panel,
 .right-panel {
     flex: 0 0 50%;
-    max-width: 50%;
-    padding: 30px; /* Increased padding */
+    max-width: 50%; /* Maintained width */
+    padding: 35px; /* Slightly increased padding for better spacing */
 }
 
 .left-panel {
-    background-color: #f8f9fa; /* Very light grey, or white if preferred */
+    background-color: #f8f9fa; /* Light, clean background for the QR section */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    border-right: 1px solid #e9ecef; /* Subtle separator */
 }
 
 #qrcode {
     width: 100%;
-    max-width: 350px; /* Adjusted slightly if needed */
-    height: auto; /* Placeholder takes care of initial height */
+    max-width: 370px; /* Maintained max-width */
+    height: auto;
     margin-top: 20px;
-    /* animation: bounceIn 1s ease; // Animation can be kept or removed */
+    /* animation: bounceIn 1s ease; /* Retained animation */
 }
 
-#qrcode p { /* Styling for placeholder text */
+/* Placeholder text styling within the QR code div */
+#qrcode p {
     font-size: 1rem;
     color: #6c757d;
+    text-align: center;
 }
-
 
 #qrcode img {
     width: 100%;
     height: auto;
-    border-radius: 8px; /* Optional: round corners of QR image slightly */
+    border-radius: 8px; /* Slightly rounded corners for the QR image itself */
 }
 
 #qrStringOutput {
-    font-weight: 500; /* Using Inter's medium weight */
+    font-weight: 500; /* Inter font medium weight */
     margin-top: 20px;
-    font-size: 0.875rem;
+    font-size: 0.8rem; /* Slightly smaller for better fit if string is long */
     color: #495057;
     word-break: break-all;
-    background-color: #e9ecef;
-    padding: 8px 12px;
+    background-color: #e9ecef; /* Light background for the string */
+    padding: 10px 15px;
     border-radius: 6px;
+    text-align: center;
+    max-width: 90%;
 }
 
 /* Disclaimer Styles */
 .disclaimer {
-    font-size: 0.75rem; /* Slightly smaller */
-    color: #6c757d; /* Softer color */
+    font-size: 0.75rem;
+    color: #6c757d;
     text-align: center;
     padding: 10px;
     width: 90%;
     position: absolute;
-    bottom: 15px; /* Adjusted position */
+    bottom: 15px;
 }
 
 /* Right Panel Styling */
 .right-panel {
-    padding: 40px;
+    padding: 40px; /* Maintained padding */
 }
 
-h3 {
-    font-size: 1.125rem; /* Slightly adjusted size */
-    color: #6c757d; /* Softer color */
-    margin: 0 auto 8px auto; /* Adjusted margin */
+h3 { /* Subtitle */
+    font-size: 1.05rem; /* Slightly adjusted */
+    color: #6c757d;
+    margin: 0 auto 8px auto;
     text-align: center;
-    font-weight: 500;
+    font-weight: 500; /* Inter medium */
 }
 
-h2 {
-    font-size: 1.75rem; /* Adjusted size */
-    color: #212529; /* Darker heading color */
-    margin: 0 auto 30px auto; /* Adjusted margin */
+h2 { /* Main Title */
+    font-size: 1.8rem; /* Slightly adjusted */
+    color: #2c3e50; /* Modern dark blue/grey */
+    margin: 0 auto 35px auto; /* Increased bottom margin */
     text-align: center;
-    font-weight: 700;
+    font-weight: 700; /* Inter bold */
 }
 
 /* Form Styles */
@@ -143,85 +149,81 @@ form {
 }
 
 form label {
-    font-weight: 500; /* Medium weight for labels */
-    color: #495057; /* Label color */
-    margin-top: 16px; /* Adjusted spacing */
-    margin-bottom: 6px; /* Space between label and input */
+    font-weight: 500; /* Inter medium */
+    color: #495057;
+    margin-top: 18px; /* Increased top margin for spacing */
+    margin-bottom: 8px; /* Space between label and input */
     text-align: left;
     display: flex;
     align-items: center;
     font-size: 0.9rem;
 }
 
-form label i {
-    margin-right: 10px; /* Increased space for icon */
-    color: #007bff; /* Icon color - primary */
-    font-size: 1rem; /* Adjusted icon size */
-    width: 20px; /* Ensure icon alignment */
+form label i { /* Icon styling */
+    margin-right: 10px;
+    color: #007bff; /* Primary blue for icons */
+    font-size: 1.1rem; /* Slightly larger icons */
+    width: 22px; /* Ensure consistent alignment */
     text-align: center;
+    opacity: 0.85;
 }
 
 form input,
 form select {
-    padding: 12px 15px; /* Updated padding */
-    margin-top: 0; /* Removed margin-top as it's on label now */
-    border: 1px solid #ced4da; /* Modern border */
-    border-radius: 8px; /* Modern border-radius */
-    box-shadow: none; /* Removed default shadow for a flatter look */
+    padding: 12px 16px; /* Comfortable padding */
+    margin-top: 0;
+    border: 1px solid #ced4da; /* Standard modern border */
+    border-radius: 8px; /* Modern rounded corners */
+    box-shadow: none; /* Flatter look */
     outline: none;
-    font-size: 1rem; /* Base font size for inputs */
-    color: #495057; /* Input text color */
+    font-size: 0.95rem; /* Input text size */
+    color: #495057;
     width: 100%;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    background-color: #fff; /* Ensure background is white */
+    background-color: #fff;
 }
 
 form input:focus,
 form select:focus {
-    border-color: #007bff; /* Primary color for focus */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2); /* Modern focus ring */
+    border-color: #007bff; /* Primary blue focus border */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Bootstrap-like focus ring */
 }
 
-.text-danger {
-    color: #dc3545; /* Standard danger color */
+.text-danger { /* For mandatory field asterisk */
+    color: #e74c3c; /* Modern red */
     margin-left: 4px;
-    font-weight: 500;
+    font-weight: 700;
 }
 
-/* Style the select dropdown */
+/* Style the select dropdown arrow */
 form select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="none" stroke="%23495057" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 5l6 6 6-6"/></svg>'); /* Modernized dropdown arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="%23495057"><path d="M8 10.795l-4.95-4.95.707-.707L8 9.381l4.243-4.243.707.707L8 10.795z"/></svg>'); /* Cleaner, modern arrow */
     background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 16px; /* Adjusted arrow size */
-    padding-right: 40px;
+    background-position: right 16px center;
+    background-size: 12px; /* Adjusted arrow size */
+    padding-right: 40px; /* Ensure space for arrow */
 }
 
 /* Symbol Fields Container */
 .symbol-fields {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 16px;
-    gap: 15px; /* Use gap for spacing */
+    /* justify-content: space-between; // Gap handles this better */
+    margin-top: 18px;
+    gap: 15px; /* Modern way to space flex items */
 }
 
 .symbol-field {
-    flex: 1 1 calc(33.333% - 10px); /* Adjust for gap */
-    min-width: 100px;
-    /* margin-right is replaced by gap */
-}
-
-.symbol-field:last-child {
-    margin-right: 0; /* Keep if not using gap or for older browser support */
+    flex: 1 1 calc(33.333% - 10px); /* Adjust for 15px gap ( (15*2)/3 ) */
+    min-width: 100px; /* Maintained */
 }
 
 .symbol-field label {
-    margin-top: 0; /* Label is part of the field group */
-    margin-bottom: 6px;
+    margin-top: 0;
+    margin-bottom: 8px;
 }
 
 .symbol-field input {
@@ -232,13 +234,12 @@ form select {
 @media (max-width: 767px) {
     .symbol-fields {
         flex-direction: column;
-        gap: 0; /* Remove gap if stacking and relying on label margins */
+        gap: 0; /* Remove column gap, rely on label margins */
     }
 
     .symbol-field {
         max-width: 100%;
-        margin-right: 0;
-        margin-bottom: 16px; /* Add margin for stacked elements */
+        margin-bottom: 18px; /* Space between stacked symbol fields */
     }
     .symbol-field:last-child {
         margin-bottom: 0;
@@ -246,31 +247,35 @@ form select {
 }
 
 /* Button Styles */
-button#generateBtn { /* Target specifically the main button */
-    padding: 12px 24px;
-    background-color: #007bff; /* Modern primary blue */
+button#generateBtn {
+    padding: 14px 28px; /* Generous padding */
+    background-color: #007bff; /* Primary blue */
     color: white;
     border: none;
-    border-radius: 8px; /* Modern border-radius */
-    max-width: 300px;
-    min-width: 150px;
+    border-radius: 8px;
+    max-width: 320px; /* Maintained */
+    min-width: 180px; /* Maintained */
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
     font-size: 1rem;
-    font-weight: 500; /* Medium weight */
-    margin: 30px auto;
+    font-weight: 600; /* Inter semi-bold */
+    margin: 40px auto 10px auto; /* Adjusted margin */
     display: block;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    text-transform: uppercase; /* Optional: for a more "button" feel */
+    letter-spacing: 0.5px; /* Optional */
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2); /* Subtle shadow related to button color */
 }
 
 button#generateBtn:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background-color: #0069d9; /* Slightly darker blue on hover */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    transform: translateY(-1px); /* Slight lift effect */
 }
 
 button#generateBtn:active {
-    background-color: #004085; /* Even darker on active/click */
-    transform: translateY(1px); /* Subtle press effect */
+    background-color: #0056b3;
+    transform: translateY(0px); /* Press effect */
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
 }
 
 
@@ -282,10 +287,10 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 input[type="number"] {
-    -moz-appearance: textfield;
+    -moz-appearance: textfield; /* Firefox */
 }
 
-/* BounceIn Animation (can be kept or removed based on preference) */
+/* BounceIn Animation (Retained) */
 @keyframes bounceIn {
     0% {
         opacity: 0;
@@ -306,52 +311,64 @@ input[type="number"] {
 /* Responsive Adjustments for Mobile Devices */
 @media (max-width: 767px) {
     body {
-        padding: 10px; /* Reduce padding on small screens */
+        padding: 10px; /* Reduced body padding on small screens */
     }
     .container {
         flex-direction: column;
-        margin: 10px 0; /* Adjust margin */
-        border-radius: 12px; /* Slightly smaller radius for mobile */
+        margin: 10px 0;
+        border-radius: 12px;
     }
 
     .left-panel,
     .right-panel {
         flex: 0 0 100%;
         max-width: 100%;
-        padding: 20px; /* Adjust padding */
+        padding: 20px; /* Reduced padding inside panels for mobile */
+    }
+    .left-panel {
+        border-right: none; /* No right border when stacked */
+        border-bottom: 1px solid #e9ecef; /* Bottom border instead */
     }
 
     #qrcode {
-        width: 100%;
-        max-width: calc(100vw - 80px); /* Ensure it fits within padding */
-         max-height: calc(100vw - 80px);
+        width: 100%; /* Make QR responsive within its container */
+        max-width: calc(100vw - 80px); /* Ensure it fits with padding */
+        max-height: calc(100vw - 80px); /* Maintain aspect ratio if possible */
     }
     h2 {
         font-size: 1.5rem;
+        margin-bottom: 25px;
     }
     h3 {
         font-size: 1rem;
     }
     button#generateBtn {
         width: 100%;
-        max-width: none;
+        max-width: none; /* Full width button on mobile */
+        padding: 15px;
+    }
+    #qrStringOutput {
+        font-size: 0.75rem;
     }
 }
 
 /* Download Link Styling */
 #downloadPdfLink {
-    margin-top: 25px;
-    font-size: 0.9rem; /* Adjusted size */
-    font-weight: 500; /* Medium weight */
-    color: #007bff; /* Primary color */
-    text-decoration: none; /* Remove underline for a cleaner look */
+    margin-top: 30px; /* Increased spacing */
+    font-size: 0.9rem;
+    font-weight: 500; /* Inter medium */
+    color: #007bff; /* Primary blue */
+    text-decoration: none; /* Cleaner without underline */
     cursor: pointer;
-    padding: 8px 12px;
+    padding: 10px 15px; /* Make it more button-like */
     border-radius: 6px;
     transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1px solid transparent; /* For hover effect */
 }
 
 #downloadPdfLink:hover {
-    background-color: rgba(0, 123, 255, 0.1); /* Light primary background on hover */
-    text-decoration: none;
+    background-color: rgba(0, 123, 255, 0.08); /* Very light blue background on hover */
+    border-color: rgba(0, 123, 255, 0.2);
+    /* color: #0056b3; */ /* Optional: Darker text on hover */
 }
+
