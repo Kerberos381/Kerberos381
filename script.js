@@ -6,17 +6,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const infoButton = document.getElementById("infoButton");
 
     // Input fields
-    const receiverNameInput = document.getElementById("receiverName");
-    const prefixInput = document.getElementById("prefix");
-    const accountNumberInput = document.getElementById("accountNumber");
-    const bankCodeSelect = document.getElementById("bankCode");
-    const variableSymbolInput = document.getElementById("variableSymbol");
-    const constantSymbolInput = document.getElementById("constantSymbol");
-    const specificSymbolInput = document.getElementById("specificSymbol");
-    const messageInput = document.getElementById("message");
-    const amountInput = document.getElementById("amount");
+    const allInputs = {
+        receiverName: document.getElementById("receiverName"),
+        prefix: document.getElementById("prefix"),
+        accountNumber: document.getElementById("accountNumber"),
+        bankCode: document.getElementById("bankCode"),
+        amount: document.getElementById("amount"),
+        variableSymbol: document.getElementById("variableSymbol"),
+        constantSymbol: document.getElementById("constantSymbol"),
+        specificSymbol: document.getElementById("specificSymbol"),
+        message: document.getElementById("message")
+    };
 
-    // Map of special characters to replacements (for QR code generation)
+    const initialQRText = "INFO: Vyplňte údaje a klikněte na 'Generovat QR Kód'";
+
     const characterMap = {
         'á': 'a', 'č': 'c', 'ď': 'd', 'é': 'e', 'ě': 'e', 'í': 'i', 'ň': 'n',
         'ó': 'o', 'ř': 'r', 'š': 's', 'ť': 't', 'ú': 'u', 'ů': 'u', 'ý': 'y', 'ž': 'z',
@@ -24,99 +27,161 @@ document.addEventListener("DOMContentLoaded", function () {
         'Ó': 'O', 'Ř': 'R', 'Š': 'S', 'Ť': 'T', 'Ú': 'U', 'Ů': 'U', 'Ý': 'Y', 'Ž': 'Z'
     };
 
-    // Function to replace unsupported characters for QR code
     function replaceUnsupportedCharacters(text) {
+        if (typeof text !== 'string') return '';
         return text.replace(/[^\x00-\x7F]/g, (char) => characterMap[char] || '');
     }
 
-    // Function to validate and notify of unsupported characters
-    function validateText(text) {
+    function validateTextForAlert(text) { // Renamed to distinguish from silent validation
+        if (typeof text !== 'string') return true;
         const unsupportedChars = text.match(/[^\x00-\x7F]/g) || [];
         const unsupported = unsupportedChars.filter(char => !characterMap[char]);
-
         if (unsupported.length > 0) {
-            alert(`Nepodporované znaky byly detekovány a odstraněny/nahrazeny: ${unsupported.join(", ")}`);
-            // Return true as they will be replaced/removed by replaceUnsupportedCharacters
+            alert(`Některé zadané znaky nejsou přímo podporovány v QR kódu a budou nahrazeny nebo odstraněny: ${unsupported.join(", ")}. Zkontrolujte prosím výsledek.`);
         }
-        return true; 
+        return true;
     }
 
-    function setQrPlaceholder() {
-        qrCodeContainer.innerHTML = '<p style="text-align:center; color:#777; margin-top: 50px;">Zde se zobrazí QR kód po zadání údajů.</p>';
-         qrCodeContainer.style.animation = "none"; // Ensure no animation on placeholder
-    }
-
-    function generateQRCode(text) {
-        qrCodeContainer.innerHTML = ""; // Clear previous QR code or placeholder
-
-        // Reset animation
+    function generateQRCode(text, isInitial = false) {
+        qrCodeContainer.innerHTML = "";
         qrCodeContainer.style.animation = "none";
-        void qrCodeContainer.offsetWidth; // Trigger reflow to reset animation
-        qrCodeContainer.style.animation = "bounceIn 1s ease";
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // Only apply bounceIn if it's not the silent initial placeholder or an error placeholder
+                if (!isInitial && text !== initialQRText) {
+                    qrCodeContainer.style.animation = "bounceIn 1s ease";
+                } else if (isInitial) { // Or if it's the very first load
+                     qrCodeContainer.style.animation = "bounceIn 1s ease";
+                }
+            });
+        });
 
-        const qrCodeSize = window.innerWidth < 768 ? 250 : 370;
+        const qrCodeSize = window.innerWidth < 767 ? Math.min(300, qrCodeContainer.offsetWidth > 0 ? qrCodeContainer.offsetWidth - 20 : 280) : 370;
 
         new QRCode(qrCodeContainer, {
             text: text,
             width: qrCodeSize,
             height: qrCodeSize,
             colorDark: "#000000",
-            colorLight: "#FFFFFF", // Changed from transparent to white
+            colorLight: "#FFFFFF",
             correctLevel: QRCode.CorrectLevel.M,
         });
-
         qrStringOutput.textContent = text;
     }
 
-    function calculateIBAN(bankCode, prefix, accountNumber) {
-        const paddedPrefix = prefix.padStart(6, '0');
+    function calculateIBAN(bankCode, prefix, accountNumber, silent = false) {
+        if (!bankCode || !accountNumber) {
+            if (!silent) alert("Pro výpočet IBAN je nutné zadat číslo účtu a kód banky.");
+            return null;
+        }
+        const paddedPrefix = (prefix || '').padStart(6, '0');
         const paddedAccountNumber = accountNumber.padStart(10, '0');
         const bban = `${bankCode}${paddedPrefix}${paddedAccountNumber}`;
-        // Czech Republic's country code for IBAN calculation is CZ -> 1235
-        const numericIBAN = `${bban}123500`; // 12 for C, 35 for Z, 00 for two check digits placeholder
+        const numericIBAN = `${bban}123500`;
 
         try {
-            const checksum = 98n - BigInt(numericIBAN) % 97n;
-            const checkDigits = checksum.toString().padStart(2, '0');
-            // Ensure checkDigits are valid (e.g. 00-96 -> 98-02, so 01 is not possible, should be 97 - (n % 97))
-            // The formula 98 - (val % 97) is standard. If checksum is 0 or 1, padStart makes it 00 or 01.
-            // If checksum is, for example, 2, it becomes "02". If 97, it becomes "97".
-             if (checkDigits === '00' || checkDigits === '01' || checkDigits === '99') { // Some values are invalid or rare
-                // This is a very basic check, a full IBAN validation library would be more robust
-                // For simplicity, we assume the math is correct as per standard.
+            const checksumBigInt = 98n - (BigInt(numericIBAN) % 97n);
+            let checkDigits = checksumBigInt.toString();
+            if (checkDigits.length < 2) {
+                checkDigits = '0' + checkDigits;
             }
             return `CZ${checkDigits}${bban}`;
         } catch (error) {
-            console.error("Error calculating IBAN:", error, "Input values:", {bankCode, prefix, accountNumber, numericIBAN});
-            alert("Nepodařilo se vypočítat IBAN. Zkontrolujte prosím zadané číslo účtu, předčíslí a kód banky.");
+            if (!silent) {
+                console.error("Error calculating IBAN:", error, {bankCode, prefix, accountNumber, numericIBAN});
+                alert("Nepodařilo se vypočítat IBAN. Zkontrolujte prosím zadané číslo účtu, předčíslí a kód banky. Ujistěte se, že obsahují pouze číslice.");
+            }
             return null;
         }
     }
 
-    function generateQRString(data) {
-        const iban = calculateIBAN(data.bankCode, data.prefix || '', data.accountNumber); // Allow empty prefix, calculateIBAN handles padding
-        if (!iban) return null;
+    function generateQRStringForLiveUpdate(data, silentValidation = false) {
+        // For live updates, we need at least account number and bank code for a meaningful attempt
+        if (!data.accountNumber || !data.bankCode) {
+            return initialQRText; // Not enough data for a payment QR, show initial
+        }
 
-        let qrString = `SPD*1.0*ACC:${iban}*AM:${data.amount || "0"}*CC:CZK`; // Ensure amount is present
+        const iban = calculateIBAN(data.bankCode, data.prefix, data.accountNumber, silentValidation);
+        if (!iban) {
+            return initialQRText; // IBAN calculation failed (possibly due to partial input)
+        }
 
-        if (data.receiverName) qrString += `*RN:${data.receiverName}`;
+        let amountStr = "0";
+        if (data.amount) {
+            const amountNum = parseFloat(data.amount);
+            if (!isNaN(amountNum)) {
+                amountStr = amountNum.toFixed(2);
+                if (amountStr.length > 10 || amountNum > 9999999.99) { // Max 10 chars (e.g. 9999999.99)
+                    if (!silentValidation) alert("Částka je příliš vysoká nebo neplatná.");
+                    return initialQRText; // Amount too high or invalid
+                }
+            } else {
+                 if (!silentValidation && data.amount.trim() !== "") alert("Zadaná částka není platné číslo.");
+                 return initialQRText; // Invalid amount if not empty
+            }
+        }
+
+        let qrString = `SPD*1.0*ACC:${iban}*AM:${amountStr}*CC:CZK`;
+        if (data.receiverName) qrString += `*RN:${replaceUnsupportedCharacters(data.receiverName)}`;
         if (data.variableSymbol) qrString += `*X-VS:${data.variableSymbol}`;
-        if (data.constantSymbol) qrString += `*X-KS:${data.constantSymbol}`; 
-        if (data.specificSymbol) qrString += `*X-SS:${data.specificSymbol}`; 
-        if (data.message) qrString += `*MSG:${data.message}`;
-
-        // Include the payment type as instant payment
+        if (data.constantSymbol) qrString += `*X-KS:${data.constantSymbol}`;
+        if (data.specificSymbol) qrString += `*X-SS:${data.specificSymbol}`;
+        if (data.message) qrString += `*MSG:${replaceUnsupportedCharacters(data.message)}`;
         qrString += `*PT:IP`;
 
+        if (qrString.length > 300) { // Basic length check
+            if (!silentValidation) alert("Vyplněné údaje jsou příliš dlouhé pro QR kód.");
+            return initialQRText;
+        }
         return qrString;
     }
 
-    // Load bank codes from JSON file and populate the dropdown
+
+    // Debounce function:
+    let debounceTimer;
+    function debounce(func, delay) {
+        return function(...args) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Function to be called on input events
+    function handleLiveInputChange() {
+        const currentData = {
+            receiverName: allInputs.receiverName.value,
+            prefix: allInputs.prefix.value,
+            accountNumber: allInputs.accountNumber.value,
+            bankCode: allInputs.bankCode.value,
+            amount: allInputs.amount.value,
+            variableSymbol: allInputs.variableSymbol.value,
+            constantSymbol: allInputs.constantSymbol.value,
+            specificSymbol: allInputs.specificSymbol.value,
+            message: allInputs.message.value
+        };
+        // Use silent validation for live updates to avoid spamming alerts
+        const qrString = generateQRStringForLiveUpdate(currentData, true);
+        generateQRCode(qrString);
+    }
+
+    const debouncedLiveUpdate = debounce(handleLiveInputChange, 400); // 400ms delay
+
+    // Attach event listeners to all inputs
+    for (const key in allInputs) {
+        if (allInputs.hasOwnProperty(key)) {
+            const inputElement = allInputs[key];
+            if (inputElement.tagName === 'SELECT') {
+                inputElement.addEventListener('change', debouncedLiveUpdate);
+            } else {
+                inputElement.addEventListener('input', debouncedLiveUpdate);
+            }
+        }
+    }
+
     fetch('bank_codes.json')
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
         .then(data => {
@@ -124,193 +189,179 @@ document.addEventListener("DOMContentLoaded", function () {
                 const option = document.createElement('option');
                 option.value = bank.code;
                 option.textContent = `${bank.name} (${bank.code})`;
-                bankCodeSelect.appendChild(option);
+                allInputs.bankCode.appendChild(option);
             });
         })
         .catch(error => {
             console.error('Error loading bank codes:', error);
-            alert('Nepodařilo se načíst seznam kódů bank. Některé funkce nemusí být dostupné.');
+            qrCodeContainer.innerHTML = '<p style="color:red; text-align:center;">Chyba: Nepodařilo se načíst kódy bank.</p>';
+        })
+        .finally(() => {
+            generateQRCode(initialQRText, true); // Pass true for isInitial
         });
-
-    // Set initial placeholder for QR code area
-    setQrPlaceholder();
-    // Removed: generateQRCode("HELLO STRANGER"); 
 
     generateBtn.addEventListener("click", function (event) {
         event.preventDefault();
 
-        const mandatoryFields = [
-            { id: "accountNumber", name: "Číslo účtu" },
-            { id: "bankCode", name: "Kód banky", element: bankCodeSelect },
+        const mandatoryFieldsInfo = [
+            { input: allInputs.accountNumber, name: "Číslo účtu" },
+            { input: allInputs.bankCode, name: "Kód banky" },
         ];
         let allFieldsFilled = true;
-        let missingFields = [];
+        let missingFieldsMessages = [];
 
-        // Reset input styles
-        mandatoryFields.forEach(fieldInfo => {
-            const inputElement = fieldInfo.element || document.getElementById(fieldInfo.id);
-            inputElement.style.border = "none"; // Reset to default from CSS
-            inputElement.style.boxShadow = "0 2px 3px rgba(0, 0, 0, 0.1)"; // Reset to default from CSS
-        });
-
-        // Validate mandatory fields
-        mandatoryFields.forEach(fieldInfo => {
-            const inputElement = fieldInfo.element || document.getElementById(fieldInfo.id);
-            if (!inputElement.value.trim()) {
-                inputElement.style.border = "1px solid red";
-                inputElement.style.boxShadow = "0 0 5px rgba(255, 0, 0, 0.5)";
+        mandatoryFieldsInfo.forEach(fieldInfo => {
+            fieldInfo.input.style.border = "1px solid #ced4da";
+            fieldInfo.input.style.boxShadow = "none";
+            if (!fieldInfo.input.value.trim()) {
+                fieldInfo.input.style.border = "1px solid #e74c3c";
+                fieldInfo.input.style.boxShadow = "0 0 0 0.2rem rgba(231, 76, 60, 0.25)";
                 allFieldsFilled = false;
-                missingFields.push(fieldInfo.name);
+                missingFieldsMessages.push(fieldInfo.name);
             }
         });
 
         if (!allFieldsFilled) {
-            alert(`Prosím vyplňte povinná pole!: ${missingFields.join(", ")}`);
-            // Focus the first missing field
-            const firstMissingFieldId = mandatoryFields.find(f => missingFields.includes(f.name))?.id;
-            if (firstMissingFieldId) {
-                document.getElementById(firstMissingFieldId)?.focus();
-            }
+            alert(`Prosím vyplňte povinná pole: ${missingFieldsMessages.join(", ")}`);
+            mandatoryFieldsInfo.find(f => missingFieldsMessages.includes(f.name))?.input?.focus();
+            generateQRCode(initialQRText); // Revert to initial if validation fails
             return;
         }
 
-        let data = {
-            receiverName: receiverNameInput.value || "",
-            prefix: prefixInput.value || "", // prefix can be empty, IBAN calculation will pad
-            accountNumber: accountNumberInput.value,
-            bankCode: bankCodeSelect.value,
-            variableSymbol: variableSymbolInput.value,
-            constantSymbol: constantSymbolInput.value,
-            specificSymbol: specificSymbolInput.value,
-            message: messageInput.value,
-            amount: amountInput.value || "0" // Default amount to 0 if empty
+        // Perform full validation with alerts before final generation
+        if (!validateTextForAlert(allInputs.receiverName.value) || !validateTextForAlert(allInputs.message.value)) {
+            // Already alerted
+        }
+        
+        const currentData = {
+            receiverName: allInputs.receiverName.value,
+            prefix: allInputs.prefix.value,
+            accountNumber: allInputs.accountNumber.value,
+            bankCode: allInputs.bankCode.value,
+            amount: allInputs.amount.value,
+            variableSymbol: allInputs.variableSymbol.value,
+            constantSymbol: allInputs.constantSymbol.value,
+            specificSymbol: allInputs.specificSymbol.value,
+            message: allInputs.message.value
         };
 
-        // Replace unsupported characters in receiverName and message for QR code
-        // ValidateText is called first to inform user, then replaceUnsupportedCharacters cleans the string
-        if (!validateText(data.receiverName) || !validateText(data.message)) {
-            // Though validateText currently always returns true after alert,
-            // this structure allows for future change where it might return false to stop execution.
-        }
-        data.receiverName = replaceUnsupportedCharacters(data.receiverName);
-        data.message = replaceUnsupportedCharacters(data.message);
-
-
-        const qrString = generateQRString(data);
-        if (qrString) {
+        // Use the more stringent generateQRStringForLiveUpdate but with silentValidation = false to get alerts
+        const qrString = generateQRStringForLiveUpdate(currentData, false); 
+        
+        if (qrString && qrString !== initialQRText) {
             generateQRCode(qrString);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (window.innerWidth < 767) {
+                 qrCodeContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         } else {
-             setQrPlaceholder(); // If QR string generation fails (e.g. IBAN calc error), show placeholder
+            // If qrString is initialQRText, it means some validation failed in generateQRStringForLiveUpdate
+            // and an alert was likely shown. Ensure the initialQR is displayed.
+            generateQRCode(initialQRText);
         }
     });
 
     infoButton.addEventListener("click", () => {
-        qrStringOutput.style.display = qrStringOutput.style.display === "none" ? "block" : "none";
+        qrStringOutput.style.display = qrStringOutput.style.display === "none" || qrStringOutput.style.display === "" ? "block" : "none";
     });
 
-    accountNumberInput.addEventListener('paste', function (event) {
+    allInputs.accountNumber.addEventListener('paste', function (event) {
         event.preventDefault();
         const paste = (event.clipboardData || window.clipboardData).getData('text');
         parseAccountNumber(paste);
+        debouncedLiveUpdate(); // Trigger update after paste
     });
 
     function parseAccountNumber(accountString) {
         const accountRegex = /^(?:(\d{0,6})-)?(\d{1,10})(?:\/(\d{4}))?$/;
         const match = accountString.match(accountRegex);
-
         if (match) {
             const [, prefix, accountNumber, bankCode] = match;
-            prefixInput.value = prefix || '';
-            accountNumberInput.value = accountNumber || '';
+            allInputs.prefix.value = prefix || '';
+            allInputs.accountNumber.value = accountNumber || '';
             if (bankCode) {
-                bankCodeSelect.value = bankCode;
+                const bankExists = Array.from(allInputs.bankCode.options).some(opt => opt.value === bankCode);
+                if (bankExists) {
+                    allInputs.bankCode.value = bankCode;
+                } else {
+                    alert(`Kód banky "${bankCode}" ze schránky nebyl nalezen v seznamu. Prosím vyberte kód banky manuálně.`);
+                    allInputs.bankCode.value = "";
+                }
             }
         } else {
-            alert('Formát čísla účtu pro vložení není platný. Použijte formát PREDČISLI-CISLO/KODBANKY, PREDČISLI-CISLO, CISLO/KODBANKY nebo jen CISLO.');
+            alert('Formát čísla účtu pro vložení není platný...');
         }
     }
 
     downloadPdfLink.addEventListener("click", function (event) {
         event.preventDefault();
-
-        const qrCanvas = qrCodeContainer.querySelector("canvas");
-        if (!qrCanvas) {
-            alert("Nejprve prosím vygenerujte QR kód kliknutím na tlačítko 'Generovat QR Kód'.");
+        if (qrStringOutput.textContent === initialQRText || !qrCodeContainer.querySelector("canvas")) {
+            alert("Nejprve prosím vygenerujte platný platební QR kód vyplněním údajů.");
             return;
         }
+        const qrCanvas = qrCodeContainer.querySelector("canvas");
+        if (!qrCanvas) return;
 
         const qrDataUrl = qrCanvas.toDataURL("image/png");
+        const pdfData = { // Gather data for PDF at the moment of download
+            receiverName: allInputs.receiverName.value,
+            prefix: allInputs.prefix.value,
+            accountNumber: allInputs.accountNumber.value,
+            bankCode: allInputs.bankCode.options[allInputs.bankCode.selectedIndex]?.text || allInputs.bankCode.value,
+            amount: parseFloat(allInputs.amount.value || "0").toFixed(2),
+            variableSymbol: allInputs.variableSymbol.value,
+            constantSymbol: allInputs.constantSymbol.value,
+            specificSymbol: allInputs.specificSymbol.value,
+            message: allInputs.message.value,
+            iban: calculateIBAN(allInputs.bankCode.value, allInputs.prefix.value, allInputs.accountNumber.value, true) // silent for PDF
+        };
 
         const dataFields = [
-            { label: "Název příjemce", value: receiverNameInput.value },
-            { label: "Předčíslí účtu", value: prefixInput.value },
-            { label: "Číslo účtu", value: accountNumberInput.value },
-            { label: "Kód banky", value: bankCodeSelect.options[bankCodeSelect.selectedIndex].text },
-            { label: "Částka v Kč", value: amountInput.value || "0" },
-            { label: "Variabilní symbol", value: variableSymbolInput.value },
-            { label: "Konstantní symbol", value: constantSymbolInput.value },
-            { label: "Specifický symbol", value: specificSymbolInput.value },
-            { label: "Zpráva pro příjemce", value: messageInput.value },
+            { label: "Název příjemce", value: pdfData.receiverName },
+            { label: "Předčíslí účtu", value: pdfData.prefix },
+            { label: "Číslo účtu", value: pdfData.accountNumber },
+            { label: "Kód banky", value: pdfData.bankCode },
+            { label: "Částka v Kč", value: pdfData.amount },
+            { label: "IBAN", value: pdfData.iban },
+            { label: "Variabilní symbol", value: pdfData.variableSymbol },
+            { label: "Konstantní symbol", value: pdfData.constantSymbol },
+            { label: "Specifický symbol", value: pdfData.specificSymbol },
+            { label: "Zpráva pro příjemce", value: pdfData.message },
         ];
 
-        const content = [];
-        content.push({
-            text: 'Platební QR Kód',
-            style: 'header',
-            alignment: 'center'
-        });
-        content.push({
-            image: qrDataUrl,
-            width: 200, // Increased size for better readability in PDF
-            alignment: 'center',
-            margin: [0, 0, 0, 20] // Top, Right, Bottom, Left
-        });
-
+        const content = [
+            { text: 'Platební QR Kód', style: 'header', alignment: 'center' },
+            { image: qrDataUrl, width: 180, alignment: 'center', margin: [0, 0, 0, 20] }
+        ];
         dataFields.forEach(field => {
-            if (field.value.trim() !== "") { // Only add fields that have a value
+            if (field.value && field.value.toString().trim() !== "") {
                 content.push({
-                    text: [
-                        { text: `${field.label}: `, bold: true },
-                        field.value
-                    ],
-                    fontSize: 11, // Slightly smaller for more content
-                    margin: [0, 0, 0, 5]
+                    text: [{ text: `${field.label}: `, bold: true }, field.value.toString()],
+                    fontSize: 10, margin: [0, 0, 0, 6]
                 });
             }
         });
-         content.push({
+        content.push({
             text: 'UPOZORNĚNÍ: VŽDY ZKONTROLUJTE SPRÁVNOST NAČTENÝCH DAT VE VAŠÍ BANKOVNÍ APLIKACI.',
-            style: 'disclaimer',
-            alignment: 'center',
-            margin: [0, 20, 0, 0]
+            style: 'disclaimerPdf', alignment: 'center', margin: [0, 20, 0, 0]
         });
 
-
         const docDefinition = {
-            content: content,
-            defaultStyle: {
-                // font: 'Helvetica' // pdfmake default is Roboto, ensure vfs_fonts includes Helvetica or use a standard one
-            },
+            content: content, defaultStyle: { font: 'Roboto' },
             styles: {
-                header: {
-                    fontSize: 18,
-                    bold: true,
-                    margin: [0, 0, 0, 15]
-                },
-                 disclaimer: {
-                    fontSize: 9,
-                    italics: true,
-                    color: 'gray'
-                }
+                header: { fontSize: 16, bold: true, margin: [0, 0, 0, 15] },
+                disclaimerPdf: { fontSize: 8, italics: true, color: '#555555' }
             }
         };
-
         try {
-            pdfMake.createPdf(docDefinition).download('platebni_qr_kod.pdf');
+            let fileName = 'platebni_qr_kod.pdf';
+            const receiver = pdfData.receiverName.trim().replace(/[^a-z0-9]/gi, '_').toLowerCase();
+            const amountVal = pdfData.amount.trim();
+            if (receiver) fileName = `${receiver}_${amountVal || 'platba'}_qr.pdf`;
+            else if (amountVal && amountVal !== "0.00") fileName = `platba_${amountVal}_qr.pdf`;
+            pdfMake.createPdf(docDefinition).download(fileName);
         } catch(e) {
             console.error("Error creating PDF: ", e);
-            alert("Nepodařilo se vytvořit PDF. Zkontrolujte konzoli pro detaily.");
+            alert("Nepodařilo se vytvořit PDF.");
         }
     });
 });
