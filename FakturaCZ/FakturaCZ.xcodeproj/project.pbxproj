@@ -1,0 +1,13 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+/* This is a placeholder Xcode project structure.
+   To build the app, open Xcode and create a new iOS App project
+   targeting iOS 17+, then add all Swift files from the FakturaCZ/ directory. */
+	};
+	rootObject = "";
+}
