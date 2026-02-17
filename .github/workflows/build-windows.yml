@@ -1,0 +1,140 @@
+name: Build FakturaCZ
+
+on:
+  push:
+    branches: [main, master, "claude/**"]
+    paths:
+      - "FakturaCZ-Windows/**"
+  workflow_dispatch:  # Manual trigger from GitHub UI
+
+jobs:
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "FakturaCZ-Windows/requirements.txt"
+
+      - name: Install dependencies
+        working-directory: FakturaCZ-Windows
+        run: pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        working-directory: FakturaCZ-Windows
+        run: |
+          pyinstaller --name "FakturaCZ" --onedir --windowed --noconfirm --clean --add-data "app;app" main.py
+
+      - name: Create data directory
+        working-directory: FakturaCZ-Windows
+        run: New-Item -ItemType Directory -Force -Path "dist\FakturaCZ\data"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FakturaCZ-Windows
+          path: FakturaCZ-Windows/dist/FakturaCZ/
+          retention-days: 90
+
+  build-macos:
+    name: Build macOS App
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "FakturaCZ-Windows/requirements.txt"
+
+      - name: Install dependencies
+        working-directory: FakturaCZ-Windows
+        run: pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        working-directory: FakturaCZ-Windows
+        run: |
+          pyinstaller \
+            --name "FakturaCZ" \
+            --onedir \
+            --windowed \
+            --noconfirm \
+            --clean \
+            --add-data "app:app" \
+            main.py
+
+      - name: Create data directory
+        working-directory: FakturaCZ-Windows
+        run: mkdir -p dist/FakturaCZ.app/Contents/MacOS/data
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FakturaCZ-macOS
+          path: FakturaCZ-Windows/dist/FakturaCZ.app/
+          retention-days: 90
+
+  release:
+    name: Create Release (on tag)
+    needs: [build-windows, build-macos]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: FakturaCZ-Windows
+          path: FakturaCZ-Windows/
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: FakturaCZ-macOS
+          path: FakturaCZ-macOS/FakturaCZ.app/
+
+      - name: Zip Windows build
+        run: |
+          cd FakturaCZ-Windows
+          zip -r ../FakturaCZ-Windows.zip .
+
+      - name: Zip macOS build
+        run: |
+          cd FakturaCZ-macOS
+          zip -r ../FakturaCZ-macOS.zip FakturaCZ.app
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            FakturaCZ-Windows.zip
+            FakturaCZ-macOS.zip
+          generate_release_notes: true
+          body: |
+            ## FakturaCZ — Desktop Invoicing App
+
+            ### Windows
+            1. Download `FakturaCZ-Windows.zip`
+            2. Extract anywhere on your PC
+            3. Run `FakturaCZ.exe`
+
+            ### macOS
+            1. Download `FakturaCZ-macOS.zip`
+            2. Extract the `.app` bundle
+            3. Move `FakturaCZ.app` to your Applications folder
+            4. On first launch: right-click → Open (to bypass Gatekeeper)
+
+            All data is stored locally next to the executable.
